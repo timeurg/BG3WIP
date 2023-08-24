@@ -1,0 +1,16 @@
+const armorProps = [
+    'new entry', 'using', 'type', 'RootTemplate',
+    'Level',  'Rarity', 'ItemGroup',
+    'Slot', 'UseCosts', 
+    'ValueLevel', 'ValueUUID', 'ValueScale', 'ValueRounding', 'ValueOverride',
+    'Weight', 'ComboCategory', 'InventoryTab', 'ArmorType', 'Shield', 'Armor Class Ability',
+    'ArmorClass', 'MinAmount', 'MaxAmount', 'Priority', 'MinLevel', 'Proficiency Group',
+    'Ability Modifier Cap', 
+    'Boosts', 'PassivesOnEquip', 'StatusOnEquip', 
+    'Unique', 
+    'Flags', 'PersonalStatusImmunities',
+    'ColorPresetResource', 
+    'ItemColor', 'InstrumentType',
+    'ObjectCategory', 
+    '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
+];

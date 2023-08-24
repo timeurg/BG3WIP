@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<save>
+	<version major="4" minor="0" revision="4" build="602" />
+	<region id="Templates">
+		<node id="Templates">
+			<children>			
+					
+				<node id="GameObjects"> Ring 
+					<attribute id="Description" type="TranslatedString" handle="hb2d5a610ga0b0g4c65gb96dgdbbe800bddd0" version="2" />
+					<attribute id="DisplayName" type="TranslatedString" handle="h9fd58be0g3a08g449dg8a9dg3352301dab22" version="3" />
+					<attribute id="LevelName" type="FixedString" value="" />
+					<attribute id="MapKey" type="FixedString" value="f218edf7-8803-4b57-afbb-0633a326874d" />
+					<attribute id="Name" type="LSString" value="TMG_RING" />
+					<attribute id="ParentTemplateId" type="FixedString" value="4e2487ad-5675-4459-a1f9-dd3d785a8b89" />
+					<attribute id="Stats" type="FixedString" value="TMG_RING" />
+					<attribute id="Type" type="FixedString" value="item" />
+					<attribute id="_OriginalFileVersion_" type="int64" value="144115188075855912" />
+					<children>
+						<node id="GameMaster" />
+					</children>
+				</node>		
+				<node id="GameObjects"> Summon Chest Amulet
+					<attribute id="Description" type="TranslatedString" handle="hb4a9738ag42c4g4609ga60fg5f4d061f0f56" version="1" />
+					<attribute id="DisplayName" type="TranslatedString" handle="hb4e129befge62ag47c1g812g8384bef71dde" version="1" />
+					<attribute id="Icon" type="FixedString" value="AMX_Item_AMX_BASKET_AMULET" />
+					<attribute id="LevelName" type="FixedString" value="" />
+					<attribute id="MapKey" type="FixedString" value="bec7c9ed-8293-4385-8f0d-80115621790b" />
+					<attribute id="Name" type="LSString" value="TMG_SUMMON_CHEST_AMULET" />
+					<attribute id="ParentTemplateId" type="FixedString" value="fc44cf0e-04dc-4feb-b143-b1c52cffe252" />
+					<attribute id="Stats" type="FixedString" value="TMG_SUMMON_CHEST_AMULET" />					
+					<attribute id="Type" type="FixedString" value="item" />
+					<attribute id="_OriginalFileVersion_" type="int64" value="144115188075855912" />
+					<children>
+						<node id="Equipment">
+							<attribute id="EquipmentSlots" type="uint32" value="0" />
+							<children>
+								<node id="LongHair" />
+								<node id="ParentRace" />
+								<node id="ShortHair" />
+								<node id="Visuals" />
+							</children>
+						</node>
+						<node id="GameMaster" />
+					</children>
+				</node>										
+				<node id="GameObjects"> Summoned Chest
+					<attribute id="Description" type="TranslatedString" handle="550dad0a305fd51e30941fe1103d3e0e" version="1" />
+					<attribute id="DisplayName" type="TranslatedString" handle="550dad0a305fd51e30941fe1103d3e0e" version="1" />
+					<attribute id="CanBePickedUp" type="bool" value="True" />					
+					<attribute id="Flag" type="int64" value="0" />
+					<attribute id="InventoryType" type="uint8" value="24" />
+					<attribute id="Icon" type="FixedString" value="AMX_Item_AMX_BASKET_TEMP" />					
+					<attribute id="LevelName" type="FixedString" value="" />
+					<attribute id="MapKey" type="FixedString" value="7155bfc2-47f8-4a9e-8584-49637cefad99" />
+					<attribute id="Name" type="LSString" value="TMG_SUMMONED_CHEST" /> 
+					<attribute id="ParentTemplateId" type="FixedString" value="73882c7c-7624-4b62-93db-c9387b991113" />
+					<attribute id="PhysicsTemplate" type="FixedString" value="b696ed1a-5c50-3586-722a-011a92d408a1" />
+					<attribute id="ReadinessFlags" type="uint32" value="140" />
+					<attribute id="Stats" type="FixedString" value="TMG_SUMMONED_CHEST" />
+					<attribute id="Scale" type="float" value="0.5" />	
+					<attribute id="TreasureOnDestroy" type="bool" value="False" />	
+					<attribute id="Tooltip" type="uint8" value="2" />					
+					<attribute id="Type" type="FixedString" value="item" />
+					<attribute id="VisualTemplate" type="FixedString" value="dad3d63a-f3d7-679f-d160-defe1a99959d" />
+					<attribute id="_OriginalFileVersion_" type="int64" value="144115188075855912" />
+					<children>
+						<node id="GameMaster" />
+						<node id="OnDestroyActions" />						
+						<node id="InventoryList">
+							<children>
+								<node id="InventoryItem">
+									<attribute id="Object" type="FixedString" value="TMG_SUMMONED_CHEST_TT" />
+								</node>
+							</children>
+						</node>
+					</children>
+				</node>									
+			</children>
+		</node>
+	</region>
+</save>
