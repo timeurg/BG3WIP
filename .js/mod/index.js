@@ -1,13 +1,13 @@
-const { modProps, settings } = require('../.globals');
-const { log, print, count, error, logged, timed, unlogged, untimed, usage } = require('./common');
+const { modProps, settings } = require('../../.globals');
+const { log, print, count, error, logged, timed, unlogged, untimed, usage } = require('../lib/common');
 const path = require('node:path');
 const fs = require('node:fs');
-const { dirList } = require('./file');
-const sax = require("./sax");
+const { dirList } = require('../lib/file');
+const sax = require("../lib/sax");
 
 module.exports = {
     lsx_locate: logged(timed(lsx_locate)),
-    unmerge: logged(timed(unmerge)),
+    // unmerge: logged(timed(unmerge)),
 }
 
 usage.mod = `
@@ -29,52 +29,10 @@ function lsx_locate (uuid) {
 }
 
 function unmerge(filename) {
-    if (!fs.existsSync(filename)) {
-        error('File not found', filename);
-    }
-    const xml = fs.readFileSync(filename, 'utf-8')
-    let head, tail, body, mode;
-    strict = true, // set to false for html-mode
-    parser = sax.parser(strict);
-    parser.onerror = function (e) {
-        error('Failed to parse file',e)
-    };
-    parser.ontext = function (t) {
-    // got some text.  t is the string of text.
-    };
-    parser.onopentag = function (node) {
-        log(node)
-    };
-    parser.onattribute = function (attr) {
-    // an attribute.  attr has "name" and "value"
-    };
-    parser.onend = function () {
-    // parser stream is done, and ready to have more stuff written to it.
-    };
 
-    parser.write('<xml>Hello, <who name="world">world</who>!</xml>').close();
-
-    // stream usage
-    // takes the same options as the parser
-    var saxStream = require("sax").createStream(strict)
-    saxStream.on("error", function (e) {
-        // unhandled errors will throw, since this is a proper node
-        // event emitter.
-        error("SAX Error", e)
-        // clear the error
-        this._parser.error = null
-        this._parser.resume()
-    })
-    saxStream.on("opentag", function (node) {
-    // same object as above
-    })
-    // pipe is supported, and it's readable/writable
-    // same chunks coming in also go out.
-    fs.createReadStream(filename)
-    .pipe(saxStream)
-    .pipe(fs.createWriteStream("file-copy.xml"))
-    
 }
+
+
 
 
 

@@ -1,11 +1,12 @@
-const { modProps, settings } = require('../.globals');
-function logwrap(f, LVL = 0) {
+const { modProps, settings } = require('../../.globals');
+function logwrap(f, LVL = 1) {
   return function(...args) {
     if (settings.LOG_LEVEL > LVL) return f.apply(f, args);
   }
 }
 const log = logwrap(console.log.bind(console));
-const debug = logwrap(console.debug.bind(console), 1);
+const debug = logwrap(console.debug.bind(console), 2);
+const lcdebug = logwrap(console.debug.bind(console), 3);
 const count = logwrap(console.count.bind(console));
 const error = (console.error.bind(console));
 
@@ -17,16 +18,21 @@ function lc(f, y, after = true) {
       a: [],
     }
   }
-  debug('LC_ADD' + f.name, f, y, after)
+  if (!f.name) {
+    lcdebug('LC_ADD', 'UNKNOWN', ('' + f).substring(0,20))
+  } else {
+    lcdebug('LC_ADD', f.name + (after ? '_AFTER' : '_BEFORE'), (y.name ?? ('' + y).substring(0,20)).replace(/^bound /, '*'))
+  }
+  
   if (y instanceof Function) {
     after ? f.prototype.lc.a.push(y) : f.prototype.lc.b.push(y)
   }
   function _wrap(thisArg, args) {
     f.prototype.lc.b.map(y => y.apply(y, args));
-    debug('LC_FIRE_BEFORE', f.name, f.prototype.lc.b.length)
+    lcdebug('LC_FIRE', 'BEFORE' + f.name, f.prototype.lc.b.length)
     let res = f.call(thisArg, ...args);
     f.prototype.lc.a.map(y => y.apply(y, args));
-    debug('LC_FIRE_AFTER', f.name, f.prototype.lc.a.length)
+    lcdebug('LC_FIRE', 'AFTER' + f.name, f.prototype.lc.a.length)
     return res;
   }
   f.apply = _wrap;
@@ -68,7 +74,7 @@ const obj = () =>
           ? () => target
           : (
               Reflect.has(target, key) ||
-              Reflect.set(target, key, emptyObj()),
+              Reflect.set(target, key, obj()),
               Reflect.get(target, key, receiver)
             )
      )
@@ -79,7 +85,7 @@ const usage = {};
 
 module.exports = { 
   log, 
-  debug,
+  debug, lcdebug,
   print: console.log.bind(console),
   error,
   count,
