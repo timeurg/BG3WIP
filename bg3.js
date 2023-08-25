@@ -1,16 +1,21 @@
-
+const { modProps, settings } = require('./.globals');
 const mod = require('./.js/mod');
 const db = require('./.js/db');
-const { log, debug, print, usage, obj, lcdebug, error, timed, logged } = require('./.js/lib/common');
+const { log, debug, print, usage, obj, lcdebug, error, timed, logged, cache } = require('./.js/lib/common');
 const fs = require('node:fs');
 const path = require('node:path');
 const csv = require('./.js/lib/csv')
+const workplace = path.normalize(settings.locations.workDir + '/' + '.config.js');
+const defaultConfig = obj();
+defaultConfig.show = 5;
+const config = cache(workplace, obj());
 
 print('Welcome to BG3 Modding Toolbox');
 lcdebug(process.argv)
 
 const modules = {
     help,
+    set: (param, value) => config[param] = value,
     mod,
     db,
 }
@@ -104,7 +109,7 @@ if (call instanceof Function) {
     if (LC_AFTER.length) debug(LC_AFTER.length, 'after triggers fired')
     debug(call.displayName ?? call.name, 'exited');
     if (result instanceof Array) {
-        const display = result.length > 20 ? result.slice(0, 5) : result
+        const display = result.length > 20 ? result.slice(0, config.show) : result
         print(display);
         print(result.length, 'rows total, first', display.length, 'shown')
     } else {

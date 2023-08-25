@@ -1,16 +1,47 @@
 const { modProps, settings } = require('../../.globals');
-const { log, print, count, error, logged, timed, unlogged, untimed, usage } = require('../lib/common');
+const { cache, log, print, count, error, logged, timed, unlogged, untimed, usage, obj } = require('../lib/common');
 const path = require('node:path');
 const fs = require('node:fs');
 const { dirList } = require('../lib/file');
 const sax = require("../lib/sax");
+const newMod = require('./new')
+const { spawn } = require('node:child_process');
+const workplace = path.normalize(settings.locations.workDir + '/' + '.worksettings.js');
+const defaultWorkSettings = obj();
+const workSettings = cache(workplace, defaultWorkSettings);
 
 module.exports = {
     lsx_locate: logged(timed(lsx_locate)),
     // unmerge: logged(timed(unmerge)),
+    new: logged(timed(newMod)),
+    ls: () => {
+        return fs.readdirSync(settings.locations.workDir)
+            .filter(dir => fs.existsSync(`${settings.locations.workDir}/${dir}/Mods/`))
+            .map(dir => fs.readdirSync(`${settings.locations.workDir}/${dir}/Mods/`).map(mod => [mod, dir])).flat()
+            .map(([mod, dir]) => mod == dir ? [mod, mod, dir] : [`${mod}[${dir}]`, mod, dir])
+            .map(([modhandle, mod, dir]) => [modhandle, mod, dir, path.normalize(`${settings.locations.workDir}/${dir}/Mods/${mod}/meta.lsx`)])
+            .filter(([modhandle, mod, dir, meta]) => fs.existsSync(meta))
+            .map(([modhandle, mod, dir, meta]) => ({ 
+                modhandle,
+                name: mod,
+                meta,
+            }))
+    },
+    show: (name) => {
+        spawn('explorer.exe', [path.normalize(settings.locations.workDir + '/' + name)]);
+    },
+    set_active: (modhandle) => {
+        const mod = module.exports.ls().filter(m => m.modhandle == modhandle)
+        workSettings.active = mod;
+        return mod;
+    }
 }
 
 usage.mod = `
+node bg3 mod:ls
+node bg3 mod:new AwesomeMod
+node bg3 mod:set_active AwesomeMod
+
 node bg3 mod:lsx_locate 0c0c1031-4a04-4e8f-ba8a-8aafa2a396e8
 node bg3 mod:unmerge test/merged.lsx
 `

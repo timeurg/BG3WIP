@@ -1,3 +1,4 @@
+const fs = require('node:fs');
 const { modProps, settings } = require('../../.globals');
 function logwrap(f, LVL = 1) {
   return function(...args) {
@@ -81,6 +82,33 @@ const obj = () =>
    }
 )
 
+function saveCache(cache, filename) {
+  fs.writeFileSync(filename, 'module.exports = ' + JSON.stringify(cache))
+}
+const cache = (filename, def) => {
+  if(!fs.existsSync(filename)){
+    saveCache(def, filename)
+  }
+  const o = require(filename)
+  return new Proxy(o,
+      {
+          set: (target, key, value, receiver) => {
+              Reflect.set(target, key, value)
+              saveCache(target, filename)
+          },
+          get: (target, key, receiver) => (
+              key == 'toJSON'
+              ? () => target
+              : (
+                  Reflect.has(target, key) ||
+                  Reflect.set(target, key, obj()),
+                  Reflect.get(target, key, receiver)
+                  )
+          )
+      }
+  );
+}
+
 const usage = {};
 
 module.exports = { 
@@ -95,4 +123,5 @@ module.exports = {
   unlogged,
   timed,
   untimed,
+  cache,
 }

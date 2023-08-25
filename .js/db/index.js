@@ -2,8 +2,10 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { settings, modProps } = require('../../.globals');
 const { dirList } = require('../lib/file');
-const { log, print, debug, logged, timed, unlogged, untimed, usage } = require('../lib/common');
+const { log, print, debug, logged, timed, unlogged, untimed, usage, obj, cache } = require('../lib/common');
 const {xmlResources, txtResources} = require('./resources')
+const workplace = path.normalize(settings.locations.workDir + '/' + '.dbcache.js');
+const dbCache = cache(workplace, obj());
 
 module.exports = {
     txtResources: unlogged(untimed(txtResources)),
@@ -19,7 +21,8 @@ node bg3 db:values:Data/Armor.txt Boosts
 
 function find(resource, string) {
     debug('find', arguments)
-    let res = timed(txtResources)(resource)
+    dbCache.find.last = [resource, string]
+    let res = logged(txtResources)(resource)
         .filter(e => 
             Object.keys(e)
                 .map(i => string === undefined || e[i].indexOf(string) !== -1 || string === i && !!e[i])
