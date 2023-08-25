@@ -10,6 +10,7 @@ const debug = logwrap(console.debug.bind(console), 2);
 const lcdebug = logwrap(console.debug.bind(console), 3);
 const count = logwrap(console.count.bind(console));
 const error = (console.error.bind(console));
+const print = console.log.bind(console);
 
 function lc(f, y, after = true) {
   if (!f.prototype || !f.prototype.lc) {
@@ -90,21 +91,24 @@ const cache = (filename, def) => {
     saveCache(def, filename)
   }
   const o = require(filename)
+  const set = (target, key, value, receiver) => {
+    debug('setCache', target, key, value)
+    Reflect.set(target, key, value)
+    saveCache(o, filename)
+  } 
+  const get = (target, key, receiver) => (
+    key == 'toJSON'
+    ? () => target
+    : (
+        Reflect.has(target, key) ||
+        set(target, key, new Proxy({},{set,get})),
+        Reflect.get(target, key, receiver)
+        )
+  )
   return new Proxy(o,
       {
-          set: (target, key, value, receiver) => {
-              Reflect.set(target, key, value)
-              saveCache(target, filename)
-          },
-          get: (target, key, receiver) => (
-              key == 'toJSON'
-              ? () => target
-              : (
-                  Reflect.has(target, key) ||
-                  Reflect.set(target, key, obj()),
-                  Reflect.get(target, key, receiver)
-                  )
-          )
+          set,
+          get
       }
   );
 }
@@ -114,7 +118,7 @@ const usage = {};
 module.exports = { 
   log, 
   debug, lcdebug,
-  print: console.log.bind(console),
+  print,
   error,
   count,
   obj,

@@ -10,7 +10,8 @@ const dbCache = cache(workplace, obj());
 module.exports = {
     txtResources: unlogged(untimed(txtResources)),
     find: logged(untimed(find)),
-    values: unlogged(untimed(values)),    
+    values: unlogged(untimed(values)),
+    config: (name, val) => dbCache[name] = val
 }
 
 usage.db = `
@@ -20,14 +21,23 @@ node bg3 db:values:Data/Armor.txt Boosts
 `
 
 function find(resource, string) {
+    let resources;
+    debug('dbCache', dbCache)
+    if (resource == 'last') {
+        debug('last', dbCache.find.last)
+        resources = find(...dbCache.find.last)
+    } else {
+        resources = timed(txtResources)(resource)
+    }
     debug('find', arguments)
-    dbCache.find.last = [resource, string]
-    let res = logged(txtResources)(resource)
-        .filter(e => 
-            Object.keys(e)
+    
+    let res = resources.filter(e => 
+        Object.keys(e)
                 .map(i => string === undefined || e[i].indexOf(string) !== -1 || string === i && !!e[i])
                 .reduce((a, b) => a || b));
     print(res.length, 'items found');
+    dbCache.find.last = [resource == 'last' ? dbCache.find.last[0] : resource, string]
+    debug('dbCache', dbCache)
     return res;
 }
 

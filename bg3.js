@@ -10,12 +10,11 @@ const defaultConfig = obj();
 defaultConfig.show = 5;
 const config = cache(workplace, obj());
 
-print('Welcome to BG3 Modding Toolbox');
 lcdebug(process.argv)
 
 const modules = {
     help,
-    set: (param, value) => config[param] = value,
+    config: (param, value) => config[param] = value,
     mod,
     db,
 }
@@ -58,7 +57,7 @@ function help () {
     print('### USAGE ###')
     Object.values(usage).map(m => m && print(m))    
     print('### AVAILABLE PARAMETERS ###')
-    Object.keys(params).map(m => m ? m.help ? print (m.help) : print(m) : null) 
+    Object.keys(params).map(k => params[k].help ? print (k, params[k].help) : print(k))
     print('### CONTENTS ###')
     console.dir(modules)
     process.exit(1);
@@ -109,7 +108,7 @@ if (call instanceof Function) {
     if (LC_AFTER.length) debug(LC_AFTER.length, 'after triggers fired')
     debug(call.displayName ?? call.name, 'exited');
     if (result instanceof Array) {
-        const display = result.length > 20 ? result.slice(0, config.show) : result
+        const display = result.length > config.show ? result.slice(0, config.show) : result
         print(display);
         print(result.length, 'rows total, first', display.length, 'shown')
     } else {
