@@ -1,13 +1,15 @@
 const settings = {
     locations: {
-        workDir: `D:\\Games\\bg3mods`,
+        workDir: `D:\\_src\\bg3mods`,
         gameDir: 'C:\\SteamLibrary\\steamapps\\common\\Baldurs Gate 3',
         unpackedGameAssets: {
-            Shared: 'D:\\Games\\bg3GameLite\\Shared',
-            Gustav: 'D:\\Games\\bg3GameLite\\Gustav.pak',
+            Patch1: 'D:\\_src\\bg3GameLite\\Patch1',
+            Shared: 'D:\\_src\\bg3GameLite\\Shared',
+            Gustav: 'D:\\_src\\bg3GameLite\\Gustav',
+            Localization: 'D:\\_src\\bg3GameLite\\Localization',
         },
     },
-    LOG_LEVEL: process.env.LOG_LEVEL || 0,
+    LOG_LEVEL: process.env.LOG_LEVEL || process.env.LOG_LVL || 0,
 }
 
 module.exports = {settings}
