@@ -1,5 +1,5 @@
 const fs = require('node:fs');
-const { modProps, settings } = require('../../.globals');
+const { settings } = require('../../.globals');
 function logwrap(f, LVL = 1) {
   return function(...args) {
     if (settings.LOG_LEVEL > LVL) return f.apply(f, args);

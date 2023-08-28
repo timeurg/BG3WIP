@@ -1,4 +1,4 @@
-const { modProps, settings } = require('../../.globals');
+const { settings } = require('../../.globals');
 const { log, print, logged, timed, unlogged, untimed } = require('./common');
 const path = require('node:path');
 const fs = require('node:fs');

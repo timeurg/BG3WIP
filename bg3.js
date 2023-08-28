@@ -1,4 +1,4 @@
-const { modProps, settings } = require('./.globals');
+const { settings } = require('./.globals');
 const mod = require('./.js/mod');
 const db = require('./.js/db');
 const { log, debug, print, usage, obj, lcdebug, error, timed, logged, cache } = require('./.js/lib/common');

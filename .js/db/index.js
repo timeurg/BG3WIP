@@ -1,6 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { settings, modProps } = require('../../.globals');
+const { settings } = require('../../.globals');
 const { dirList } = require('../lib/file');
 const { log, print, debug, logged, timed, unlogged, untimed, usage, obj, cache } = require('../lib/common');
 const {xmlResources, txtResources} = require('./resources')
@@ -33,7 +33,7 @@ function find(resource, string) {
     
     let res = resources.filter(e => 
         Object.keys(e)
-                .map(i => string === undefined || e[i].indexOf(string) !== -1 || string === i && !!e[i])
+                .map(i => string === undefined || e[i].toLowerCase().indexOf(string.toLowerCase()) !== -1 || string.toLowerCase() === i.toLowerCase() && !!e[i])
                 .reduce((a, b) => a || b));
     print(res.length, 'items found');
     dbCache.find.last = [resource == 'last' ? dbCache.find.last[0] : resource, string]

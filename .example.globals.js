@@ -1,8 +1,3 @@
-const modProps = {
-    author: 'timeurg',
-    name: 'BG3Transmog',
-}
-
 const settings = {
     locations: {
         workDir: `D:\\Games\\bg3mods`,
@@ -15,4 +10,4 @@ const settings = {
     LOG_LEVEL: process.env.LOG_LEVEL || 0,
 }
 
-module.exports = {modProps, settings}
+module.exports = {settings}
