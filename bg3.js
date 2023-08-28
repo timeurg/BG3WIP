@@ -17,6 +17,7 @@ const modules = {
     config: (param, value) => config[param] = value,
     mod,
     db,
+    c: 'config',
 }
 
 const params = {
@@ -68,7 +69,10 @@ let input = process.argv[2];
 if (!input) help();
 let args = process.argv.splice(3);
 let call;
-const [command, ...addArgs] = input.split(':');
+let [command, ...addArgs] = input.split(':');
+if (modules[command] === '' + modules[command]) {
+    command = modules[command];
+}
 if (modules[command] && modules[command][addArgs[0]]) {
     debug('Module', command, 'command', addArgs[0])
     call = (modules[command])[addArgs[0]]
