@@ -13,6 +13,8 @@ const error = (console.error.bind(console));
 const print = console.log.bind(console);
 
 function lc(f, y, after = true) {
+  if (!f || !f.call)
+    return;
   if (!f.prototype || !f.prototype.lc) {
     f.prototype = new Function();
     f.prototype.lc = {
@@ -30,11 +32,12 @@ function lc(f, y, after = true) {
     after ? f.prototype.lc.a.push(y) : f.prototype.lc.b.push(y)
   }
   function _wrap(thisArg, args) {
+    lcdebug('LC_CALL_ARGS', args, f.call)
     f.prototype.lc.b.map(y => y.apply(y, args));
-    lcdebug('LC_FIRE', 'BEFORE' + f.name, f.prototype.lc.b.length)
+    lcdebug('LC_FIRE', 'BEFORE_' + f.name, f.prototype.lc.b.map(f => f.name))
     let res = f.call(thisArg, ...args);
     f.prototype.lc.a.map(y => y.apply(y, args));
-    lcdebug('LC_FIRE', 'AFTER' + f.name, f.prototype.lc.a.length)
+    lcdebug('LC_FIRE', 'AFTER_' + f.name, f.prototype.lc.a.map(f => f.name))
     return res;
   }
   f.apply = _wrap;
@@ -84,27 +87,42 @@ const obj = () =>
 )
 
 function saveCache(cache, filename) {
+  log(`cache-save-${filename}`, cache)
   fs.writeFileSync(filename, 'module.exports = ' + JSON.stringify(cache))
 }
 const cache = (filename, def) => {
   if(!fs.existsSync(filename)){
     saveCache(def, filename)
   }
-  const o = require(filename)
-  const set = (target, key, value, receiver) => {
-    debug('setCache', target, key, value)
-    Reflect.set(target, key, value)
+  let o = require(filename)
+  log(`cache-${filename}`, o)
+
+  function set (target, key, value, receiver) {
+    log(value, value === Object(value))
+    log(`cache-set-${filename}`, key, value)
+    Reflect.set(target, key, typeof value !== 'object' ? value : new Proxy(value,
+      {
+          set,
+          get
+      }
+    ))
     saveCache(o, filename)
   } 
-  const get = (target, key, receiver) => (
-    key == 'toJSON'
-    ? () => target
-    : (
-        Reflect.has(target, key) ||
-        set(target, key, new Proxy({},{set,get})),
-        Reflect.get(target, key, receiver)
-        )
-  )
+  function get (target, key, receiver) {
+    if (key == 'toJSON') return () => target;
+    if (!Reflect.has(target, key))
+      Reflect.set(target, key, new Proxy({},{set,get}), receiver)
+    let r = Reflect.get(target, key, receiver);
+    // debug('cache-get', r)
+    let a;
+    try {
+      a = typeof r !== 'object' ? r : new Proxy(r,{set,get})
+    } catch (e) {
+      // debug('cache-get-err', e, r)
+      a = r;
+    }
+    return a
+  }
   return new Proxy(o,
       {
           set,

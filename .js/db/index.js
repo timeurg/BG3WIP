@@ -9,7 +9,7 @@ const dbCache = cache(workplace, obj());
 
 module.exports = {
     txtResources: unlogged(untimed(txtResources)),
-    find: logged(untimed(find)),
+    find: logged(timed(find)),
     values: unlogged(untimed(values)),
     config: (name, val) => dbCache[name] = val
 }
@@ -22,22 +22,31 @@ node bg3 db:values:Data/Armor.txt Boosts
 
 function find(resource, string) {
     let resources;
-    debug('dbCache', dbCache)
+    debug('dbCache-start', dbCache.find)
     if (resource == 'last') {
         debug('last', dbCache.find.last)
-        resources = find(...dbCache.find.last)
+        resources = timed(txtResources)(dbCache.find.last.resource)
+        dbCache.find.last.history.map(
+            s => resources = _find(resources, s)
+        )
     } else {
         resources = timed(txtResources)(resource)
     }
     debug('find', arguments)
-    
-    let res = resources.filter(e => 
-        Object.keys(e)
-                .map(i => string === undefined || e[i].toLowerCase().indexOf(string.toLowerCase()) !== -1 || string.toLowerCase() === i.toLowerCase() && !!e[i])
-                .reduce((a, b) => a || b));
-    print(res.length, 'items found');
-    dbCache.find.last = [resource == 'last' ? dbCache.find.last[0] : resource, string]
-    debug('dbCache', dbCache)
+    function _find (resources, string) {
+        let res = resources.filter(e => 
+            Object.keys(e)
+                    .map(i => string === undefined || e[i].toLowerCase().indexOf(string.toLowerCase()) !== -1 || string.toLowerCase() === i.toLowerCase() && !!e[i])
+                    .reduce((a, b) => a || b));
+        print(res.length, 'items found');
+        return res;
+    }
+    const res = _find(resources, string)
+    dbCache.find.last = {
+        resource: resource == 'last' ? dbCache.find.last.resource : resource, 
+        history: (resource == 'last' ? [...dbCache.find.last.history, string] : [string]).filter(i => i)
+    }
+    debug('dbCache-end', dbCache.find)
     return res;
 }
 
