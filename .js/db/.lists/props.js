@@ -12,5 +12,4 @@ const armorProps = [
     'ColorPresetResource', 
     'ItemColor', 'InstrumentType',
     'ObjectCategory', 
-    '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
 ];
