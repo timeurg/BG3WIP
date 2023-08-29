@@ -1,3 +1,5 @@
 .globals.js
 *.lsf
 test/*
+logs/*
+*.log

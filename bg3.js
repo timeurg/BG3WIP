@@ -81,7 +81,7 @@ if (modules[command] && modules[command][addArgs[0]]) {
     debug('Command', command)
     call = modules[command]
 }
-if (call instanceof Function) {
+if (call && call.apply) {
     const runParams = obj();
     args.map((arg, pos) => arg.indexOf('--')  === 0 && (runParams.params[pos] = arg)).filter(i => i)
     lcdebug(runParams)

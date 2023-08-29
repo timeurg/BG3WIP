@@ -28,19 +28,40 @@ module.exports = {
             }))
     },
     show: (name) => {
+        name = name || workSettings.active.name;
         spawn('explorer.exe', [path.normalize(settings.locations.workDir + '/' + name)]);
+    },
+    test: () => {
+        //@TODO build a minimal pak and enable, copy all able-to load unpacked files to settings.locations.gameDir /Data
+        // option to disable other mods
+        // vulkan option
+        const out = fs.openSync('./logs/out.log', 'a');
+        const err = fs.openSync('./logs/err.log', 'a');
+        const child = spawn(
+            path.normalize(settings.locations.gameDir + '/bin/bg3_dx11.exe'), 
+            ['--skip-launcher'], 
+            {
+                cwd: path.normalize(settings.locations.gameDir + '/bin'),
+                detached: true, 
+                stdio: [ 'ignore', out, err ]
+            });
+        child.unref();
     },
     set_active: (modhandle) => {
         const mod = module.exports.ls().filter(m => m.modhandle == modhandle)
         workSettings.active = mod;
         return mod;
-    }
+    },
+    config: (name, val) => workSettings.userConfig[name] = val,
+    c: 'config',
 }
 
 usage.mod = `
 node bg3 mod:ls
 node bg3 mod:new AwesomeMod
 node bg3 mod:set_active AwesomeMod
+
+node bg3 test
 
 node bg3 mod:lsx_locate 0c0c1031-4a04-4e8f-ba8a-8aafa2a396e8
 node bg3 mod:unmerge test/merged.lsx
