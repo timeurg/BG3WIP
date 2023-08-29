@@ -13,7 +13,7 @@ Allows to search and analyze game database
 
 |Command|Description|Examples|
 |---|---|---|
-db:find:{Resource}| Search for text in sourcefiles | Find all armor that grants stealth:<br>`node bg3 db:find:Data/Armor.txt 'Skill(Stealth'`<br>Or try to find a hat:<br>`node bg3 db:find:Data/Armor.txt Hat`<br>Narrow down your last search as many times as you want<br>`node bg3 db:find:last wiz`<br>`node bg3 db:find:last rich`<br>Save results in mod-bound datasets (see [mod](#mod) module documentation) |
+db:find:{Resource}| Search for text in sourcefiles | Find all armor that grants stealth:<br>`node bg3 db:find:Data/Armor.txt 'Skill(Stealth'`<br>Or try to find a hat:<br>`node bg3 db:find:Data/Armor.txt Hat`<br>Narrow down your last search as many times as you want<br>`node bg3 db:find:last wiz`<br>`node bg3 db:find:last rich`<br>Find anything anywhere (As long as it is a bg3 file) ``<ber>Save results in mod-bound datasets (see [mod](#mod) module documentation) |
 db:values | Analyze values of a property | `node bg3 db:values:Data/Armor.txt Boosts` |
 
 
