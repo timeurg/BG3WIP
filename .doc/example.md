@@ -31,4 +31,12 @@ node bg3 mod:dedupe test/Armor.txt test/Boots.txt test/Gloves.txt test/Head.txt 
 
 ```
 
-And go on with my day...
+Well actually I don't, I just hit 
+
+```
+node sequence.js ./private/basket.js
+
+node bg3 mod:test
+```
+
+And enjoy loking fabulous ingame.

@@ -20,12 +20,14 @@ module.exports = function txtResources(name = 'Data/Armor.txt') {
     let res = txt
     .map(e => {
         const propMap = {
-            'new entry': 'name'
+            'new entry': 'name',
+            type: 'type',
+            using: 'using'
         }, rPropMap = {};
         Object.keys(propMap).map(k => rPropMap[propMap[k]] = k)
         const armor = {
             toString: function toArmorString() {
-                return (Object.keys(this).map(k => `${rPropMap[k] || k} "${Array.isArray(this[k]) ? this[k].join('"') : this[k]}"`).join("\r\n") + "\r\n")
+                return (Object.keys(this).map(k => `${rPropMap[k] || `data ${k}`} "${Array.isArray(this[k]) ? this[k].join('"') : this[k]}"`).join("\r\n") + "\r\n")
             }
         }
         let entry = Object.create(armor);
