@@ -73,9 +73,9 @@ Save db search results in mod-bound datasets for later use
 
 Add a new entity to active mod
 
-#### mod:grab
+#### mod:dataset
 
-Adds results of your last db:find to currently active mod.
+See [example](.doc/example.md)
 
 #### mod:test
 

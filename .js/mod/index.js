@@ -1,5 +1,5 @@
 const { settings } = require('../../.globals');
-const { cache, log, print, count, error, logged, timed, unlogged, untimed, usage, obj } = require('../lib/common');
+const { cache, log, print, count, error, logged, timed, unlogged, untimed, usage, obj, debug } = require('../lib/common');
 const path = require('node:path');
 const fs = require('node:fs');
 const { dirList } = require('../lib/file');
@@ -9,8 +9,9 @@ const { spawn } = require('node:child_process');
 const workplace = path.normalize(settings.locations.workDir + '/' + '.worksettings.js');
 const defaultWorkSettings = obj();
 const workSettings = cache(workplace, defaultWorkSettings);
+const _ = require('lodash')
 
-module.exports = {
+module.exports = (db) => ({
     lsx_locate: logged(timed(lsx_locate)),
     // unmerge: logged(timed(unmerge)),
     new: logged(timed(newMod(workSettings))),
@@ -52,9 +53,35 @@ module.exports = {
         workSettings.active = mod;
         return mod;
     },
+    dataset: (...mutations) => {
+        const res = db.find('last');
+        return res.map(i => {
+            mutations.map(m => {
+                try {
+                    let mutation = require('./mutations/' + m)
+                    i = mutation(i)
+                } catch (e) {
+                    print(`Mutation ${m} not found`)
+                }                
+            })
+            return i;
+        })
+    },
+    dedupe(donor, ...files) {
+        let res = db.find(donor);
+        debug(res.length, 'items in original')
+        files.map(f => {
+            let exist = db.find(f);
+            debug(exist.length, 'items in ', f);
+            res = _.differenceBy(res, exist, (a) => a.name)
+            debug(res.length, 'items left in original')
+        })
+        print(res.length, 'items left in original')
+        return res;
+    },
     config: (name, val) => name ? workSettings[name] = val : print(workSettings),
     c: 'config',
-}
+})
 
 usage.mod = `
 node bg3 mod:ls

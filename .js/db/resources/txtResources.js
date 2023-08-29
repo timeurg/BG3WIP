@@ -13,20 +13,24 @@ module.exports = function txtResources(name = 'Data/Armor.txt') {
         txt = dirList().map(dir => path.normalize(dir + '/Stats/Generated/' + name ?? ''))//.map(f => {debug(f, fs.existsSync(f)); return f})
                 .filter(f => fs.existsSync(f))//.map(f => {debug(f); return f})
                             .map(p => fs.readFileSync(p, 'utf8'))
-                            .join();
+                            .join("\r\n\r\n");
     }
     txt = txt.split("\r\n\r\n");
     print(txt.length, 'entries')
     let res = txt
     .map(e => {
-        let entry = {
-            // __raw__: e
-        };
+        const propMap = {
+            'new entry': 'name'
+        }, rPropMap = {};
+        Object.keys(propMap).map(k => rPropMap[propMap[k]] = k)
+        const armor = {
+            toString: function toArmorString() {
+                return (Object.keys(this).map(k => `${rPropMap[k] || k} "${Array.isArray(this[k]) ? this[k].join('"') : this[k]}"`).join("\r\n") + "\r\n")
+            }
+        }
+        let entry = Object.create(armor);
         e.split("\r\n").map(line => {
             // print(line)
-            let propMap = {
-                'new entry': 'name'
-            }
             let prop = line.substring(0, line.indexOf(' "'));
             // log(prop)
             let data = line.replace(prop, '');

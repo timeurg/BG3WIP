@@ -15,8 +15,8 @@ lcdebug(process.argv)
 const modules = {
     help,
     config: (param, value) => config[param] = value,
-    mod,
     db,
+    mod: mod(db),
     c: 'config',
 }
 
@@ -41,9 +41,12 @@ const params = {
                 case '.csv':
                     return timed(logged(csv))(filename, result)
                 default:
-                    contents = '' + result;
-                    if (contents == '[object Object]') {
-                        contents = JSON.stringify(result)
+                    // debug(result)
+                    const toStr = (o) => '' + o == '[object Object]' ? JSON.stringify(o) : '' + o;
+                    if (Array.isArray(result)) {
+                        contents = result.map(toStr).join('\r\n')
+                    } else {
+                        contents = toStr(result)
                     }
             }
             return fs.writeFileSync(filename, contents);
