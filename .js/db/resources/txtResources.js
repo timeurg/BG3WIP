@@ -6,10 +6,15 @@ const { log, print, debug, logged, timed, unlogged, untimed, usage } = require('
 
 module.exports = function txtResources(name = 'Data/Armor.txt') {    
     debug(arguments)
-    let txt = dirList().map(dir => path.normalize(dir + '/Stats/Generated/' + name ?? ''))//.map(f => {debug(f, fs.existsSync(f)); return f})
-                       .filter(f => fs.existsSync(f))//.map(f => {debug(f); return f})
-                       .map(p => fs.readFileSync(p, 'utf8'))
-                       .join();
+    let txt;
+    if (fs.existsSync(name)) {
+        txt = fs.readFileSync(name, 'utf8')
+    } else {
+        txt = dirList().map(dir => path.normalize(dir + '/Stats/Generated/' + name ?? ''))//.map(f => {debug(f, fs.existsSync(f)); return f})
+                .filter(f => fs.existsSync(f))//.map(f => {debug(f); return f})
+                            .map(p => fs.readFileSync(p, 'utf8'))
+                            .join();
+    }
     txt = txt.split("\r\n\r\n");
     print(txt.length, 'entries')
     let res = txt

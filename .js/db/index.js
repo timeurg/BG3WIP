@@ -18,9 +18,10 @@ usage.db = `
 node bg3 db:find:Data/Armor.txt Hat
 node bg3 db:find:TreasureTable.txt Candle
 node bg3 db:values:Data/Armor.txt Boosts
+node bg3 db:find:'E:\\SteamLibrary\\steamapps\\common\\Baldurs Gate 3\\Data\\Public\\BasketEquipmentNSFW\\Stats\\Generated\\Data\\Armor.txt' using:_foot --dump Boots.txt
 `
 
-function find(resource, string) {
+function find(resource, string, isCaseSensitive = false) {
     let resources;
     debug('dbCache-start', dbCache.find)
     if (resource == 'last') {
@@ -32,11 +33,28 @@ function find(resource, string) {
     } else {
         resources = timed(txtResources)(resource)
     }
-    debug('find', arguments)
+    print('find', arguments)
     function _find (resources, string) {
+        let f;
+        if (!string) {
+            f = e => i => true
+            print('all')
+        } else if (string.split(':').length == 2) {
+            const [p, v] = string.split(':')
+            print(p, v, {type: 'Armor'}['type'].includes('Armor'))
+            f = e => i => e[p] && (e[p].includes(v) || !isCaseSensitive && e[p].toLowerCase().includes(v.toLowerCase()))
+        } else {
+            print('standart search', string)
+            if (isCaseSensitive) {
+                f = e => i => e[i].indexOf(string) !== -1 || string === i && !!e[i]
+            } else {
+                f = e => i => e[i].toLowerCase().indexOf(string.toLowerCase()) !== -1 || string.toLowerCase() === i.toLowerCase() && !!e[i]
+            }
+            
+        }
         let res = resources.filter(e => 
             Object.keys(e)
-                    .map(i => string === undefined || e[i].toLowerCase().indexOf(string.toLowerCase()) !== -1 || string.toLowerCase() === i.toLowerCase() && !!e[i])
+                    .map(f(e))
                     .reduce((a, b) => a || b));
         print(res.length, 'items found');
         return res;

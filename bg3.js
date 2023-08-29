@@ -76,7 +76,10 @@ if (modules[command] === '' + modules[command]) {
 if (modules[command] && modules[command][addArgs[0]]) {
     debug('Module', command, 'command', addArgs[0])
     call = (modules[command])[addArgs[0]]
-    args = [...addArgs.splice(1), ...args, ]
+    print(addArgs)
+    if(addArgs.length > 1) {
+        args = [addArgs.splice(1).join(':'), ...args, ]
+    }    
 } else {
     debug('Command', command)
     call = modules[command]
