@@ -103,30 +103,13 @@ const cache = (filename, def) => {
     Reflect.set(target, key, typeof value !== 'object' ? value : new Proxy(value,
       {
           set,
-          get
       }
     ))
     saveCache(o, filename)
   } 
-  function get (target, key, receiver) {
-    if (key == 'toJSON') return () => target;
-    if (!Reflect.has(target, key))
-      Reflect.set(target, key, new Proxy({},{set,get}), receiver)
-    let r = Reflect.get(target, key, receiver);
-    // debug('cache-get', r)
-    let a;
-    try {
-      a = typeof r !== 'object' ? r : new Proxy(r,{set,get})
-    } catch (e) {
-      // debug('cache-get-err', e, r)
-      a = r;
-    }
-    return a
-  }
   return new Proxy(o,
       {
           set,
-          get
       }
   );
 }
