@@ -1,0 +1,27 @@
+{
+  "name": "bg3wip",
+  "version": "1.0.0",
+  "description": "BG3 Modding Tool",
+  "main": "bg3.js",
+  "scripts": {
+    "test": "node bg3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/timeurg/BG3WIP.git"
+  },
+  "keywords": [
+    "baldurs-gate-3",
+    "modding",
+    "bg3"
+  ],
+  "author": "timeurg",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/timeurg/BG3WIP/issues"
+  },
+  "homepage": "https://github.com/timeurg/BG3WIP#readme",
+  "dependencies": {
+    "readline-sync": "^1.4.10"
+  }
+}

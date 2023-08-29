@@ -13,7 +13,7 @@ const workSettings = cache(workplace, defaultWorkSettings);
 module.exports = {
     lsx_locate: logged(timed(lsx_locate)),
     // unmerge: logged(timed(unmerge)),
-    new: logged(timed(newMod)),
+    new: logged(timed(newMod(workSettings))),
     ls: () => {
         return fs.readdirSync(settings.locations.workDir)
             .filter(dir => fs.existsSync(`${settings.locations.workDir}/${dir}/Mods/`))
@@ -52,7 +52,7 @@ module.exports = {
         workSettings.active = mod;
         return mod;
     },
-    config: (name, val) => workSettings.userConfig[name] = val,
+    config: (name, val) => name ? workSettings[name] = val : print(workSettings),
     c: 'config',
 }
 

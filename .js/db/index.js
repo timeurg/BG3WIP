@@ -60,6 +60,7 @@ function find(resource, string, isCaseSensitive = false) {
         return res;
     }
     const res = _find(resources, string)
+    dbCache.find = dbCache.find || {}
     dbCache.find.last = {
         resource: resource == 'last' ? dbCache.find.last.resource : resource, 
         history: (resource == 'last' ? [...dbCache.find.last.history, string] : [string]).filter(i => i)

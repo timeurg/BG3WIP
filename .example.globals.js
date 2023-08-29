@@ -9,6 +9,9 @@ const settings = {
             Localization: 'D:\\_src\\bg3GameLite\\Localization',
         },
     },
+    defaultWorkSettings: {
+        author: ''
+    },
     LOG_LEVEL: process.env.LOG_LEVEL || process.env.LOG_LVL || 0,
 }
 
