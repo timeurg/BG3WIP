@@ -8,6 +8,8 @@ But I just wanted to code a little, plus I do have big plans with this project.
 
 ## What it does
 
+This toolset provides various utitlities designed to make my (or yours) life better. If I come up with a mod idea my first thought is "Can I make my ideas so clear to a computer that it just processes them and moves results to the game, so that I (or a scheduler) can repeat this process every release with ease". As always the answer is "work fot it". The results of my work are as follows:
+
 ### <a id="db"></a> DB module
 Allows to search and analyze game database
 
@@ -17,17 +19,17 @@ db:find:{Resource}| Search for text in sourcefiles | Find all armor that grants 
 db:values | Analyze values of a property | `node bg3 db:values:Data/Armor.txt Boosts` |
 
 
-You can configure how much entries are shown in console (doesn't affect commands, only presentation)
+You can configure how much entries are shown in console (doesn't affect commands, only presentation).
 
 `node bg3 config show 10`
 
-You can dump any output (the real result of a function, not what is shown) to a file:
+You can dump any output (the real result of a function, not what is shown due to `config show` param:
 
 `node bg3 db:find:Data/Armor.txt --dump test/Armor.csv`
 
-This, for example will pop out a file, containing [all(find_1) armors in the game to a csv, which you can import into Excel or Google Docs for analysis.
+This, for example, will pop out a file, containing [all(find_1) armors in the game to a csv, which you can import into Excel or Google Docs for analysis.
 
-[find_1] Those in whatever unpacked mod directories you mentioned in .globals.js actually
+
 
 Dump respects file extention - csv will produce a csv, txt extention should produce gamefiles for txt-stored objects (like Armor, Inventory, etc), lsx would make proper game resources.
 
@@ -78,16 +80,16 @@ Huge thanks to
 
 ### db
 * Models for
-** ~~armor~~
-** treasuretable, inventory
-** loc
-** spells
-** weapons
-** GameObjects
-** npc
-** sfx
+    * ~~armor~~
+    * treasuretable, inventory
+    * loc
+    * spells
+    * weapons
+    * GameObjects
+    * npc
+    * sfx
 * Notable objects
-Shared.pak\Mods\Shared\EquipmentSettings\EquipmentSlots.lsx
+    *  Shared.pak\Mods\Shared\EquipmentSettings\EquipmentSlots.lsx
 
 ## Roadmap
 
