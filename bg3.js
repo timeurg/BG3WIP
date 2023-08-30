@@ -93,7 +93,7 @@ if (call && call.apply) {
     lcdebug(runParams)
     const LC_BEFORE = [], LC_AFTER = [];
     runParams.pos = Object.keys(runParams.params).map(k=>+k).sort((a,b) => a >b );
-    if (runParams.pos[0]) {
+    if (runParams.pos[0] !== undefined) {
         runParams.args = args.splice(runParams.pos[0])
         lcdebug(runParams)
         runParams.parsed = runParams.pos.map((k, i) => ({
@@ -107,7 +107,8 @@ if (call && call.apply) {
                 LC_BEFORE.push(params[p.command].callback.bind(params[p.command].callback, ...p.args))
             ) 
             : log(p.command, 'not recognized'))
-            lcdebug(runParams)
+        lcdebug('options', runParams)
+        args = args.splice(runParams.pos[0])
     }
     // return;
     debug('Executing', call.name)
