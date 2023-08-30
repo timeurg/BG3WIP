@@ -11,6 +11,10 @@ const lcdebug = logwrap(console.debug.bind(console), 3);
 const count = logwrap(console.count.bind(console));
 const error = (console.error.bind(console));
 const print = console.log.bind(console);
+const printed = []
+const printOnce = (...arg) => printed.includes(JSON.stringify(arg)) || printed.push(JSON.stringify(arg)) + print(...arg)
+const errored = []
+const errorOnce = (...arg) => errored.includes(JSON.stringify(arg)) || errored.push(JSON.stringify(arg)) + error(...arg)
 
 function lc(f, y, after = true) {
   if (!f || !f.call)
@@ -129,4 +133,6 @@ module.exports = {
   timed,
   untimed,
   cache,
+  printOnce,
+  errorOnce,
 }

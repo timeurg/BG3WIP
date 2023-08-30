@@ -8,15 +8,15 @@ But I just wanted to code a little, plus I do have big plans with this project.
 
 ## What it does
 
-This toolset provides various utitlities designed to make my (or yours) life better. If I come up with a mod idea my first thought is "Can I make my ideas so clear to a computer that it just processes them and moves results to the game, so that I (or a scheduler) can repeat this process every release with ease". As always the answer is "work fot it". The results of my work are as follows:
+This toolset provides various utilities designed to make my (or yours) life better. If I come up with a mod idea my first thought is "Can I make my ideas so clear to a computer that it just processes them and moves results to the game, so that I (or a scheduler) can repeat this process every release with ease". As always the answer is "work fot it". The results of my work are as follows:
 
 ### <a id="db"></a> DB module
 Allows to search and analyze game database
 
 |Command|Description|Examples|
 |---|---|---|
-db:find:{Resource}| Search for text in sourcefiles | Find all armor that grants stealth:<br>`node bg3 db:find:Data/Armor.txt 'Skill(Stealth'`<br>Or try to find a hat:<br>`node bg3 db:find:Data/Armor.txt Hat`<br>Narrow down your last search as many times as you want<br>`node bg3 db:find:last wiz`<br>`node bg3 db:find:last rich`<br>Find anything anywhere (As long as it is a bg3 file) ``<ber>Save results in mod-bound datasets (see [mod](#mod) module documentation) |
-db:values | Analyze values of a property | `node bg3 db:values:Data/Armor.txt Boosts` |
+db:find {Resource}| Search for text in sourcefiles | Find all armor that grants stealth:<br>`node bg3 db:find Data/Armor.txt 'Skill(Stealth'`<br>Or try to find a hat:<br>`node bg3 db:find Data/Armor.txt Hat`<br>Narrow down your last search as many times as you want<br>`node bg3 db:find last wiz`<br>`node bg3 db:find last rich`<br>Find anything anywhere (As long as it is a bg3 file) `node bg3 db:find 'C:\Downloads\Armor.txt'`<ber>Save results in mod-bound datasets (see [mod](#mod) module documentation) |
+db:values | Analyze values of a property | `node bg3 db:values Data/Armor.txt Boosts` |
 
 
 You can configure how much entries are shown in console (doesn't affect commands, only presentation).
@@ -25,11 +25,9 @@ You can configure how much entries are shown in console (doesn't affect commands
 
 You can dump any output (the real result of a function, not what is shown due to `config show` param:
 
-`node bg3 db:find:Data/Armor.txt --dump test/Armor.csv`
+`node bg3 db:find Data/Armor.txt --dump test/Armor.csv`
 
-This, for example, will pop out a file, containing [all(find_1) armors in the game to a csv, which you can import into Excel or Google Docs for analysis.
-
-
+This, for example, will pop out a csv file containing all armors found in configured paths. You can import it into Excel or Google Docs for analysis.
 
 Dump respects file extention - csv will produce a csv, txt extention should produce gamefiles for txt-stored objects (like Armor, Inventory, etc), lsx would make proper game resources.
 
@@ -43,9 +41,18 @@ Provides mod building, testing and publishing commands
 | mod:ls | Lists mods found in the working directory | `node bg3 mod:ls` |
 | mod:set_active | Start or resume working on a mod in your working directory | Can look like `node bg3 mod:set_active AwesomeMod<v5>` if you have multiple versions of same mod in working directory |
 | mod:lsx_locate | Finds lsx file by uuid. Uses active mod and pathes from .globals.js | `node bg3 mod:lsx_locate 0c0c1031-4a04-4e8f-ba8a-8aafa2a396e8` |
-| mod:dataset | Make use of your *db:find*s with or without inbuilt and user defined mutations inside your AwesomeMod | `node bg3 mod:dataset toUnderwear --dump test/Boots.txt`<br> See [example](.doc/example.md)|
 | mod:test | Launches the game with your AwesomeMod enabled, as much files uncompiled and pushed into game Data as we can. Some additional informartion on game session run can be found in ./logs, so analyze that))<br>I highly recommend [Skip Startup Videos](https://www.nexusmods.com/baldursgate3/mods/657) and [No Press Any Key Menu](https://www.nexusmods.com/baldursgate3/mods/745) for this, great mods. I look into []() | `node bg3 mod:test`
 
+#### Dataset submodule
+
+Make use of your *db:find*s with or without inbuilt and user defined mutations inside your AwesomeMod | <br> See [example](.doc/example.md)
+
+|Command|Description|Examples|
+|---|---|---|
+| mod:dataset:ls | Lists active mod's datasets | `node bg3 mod:dataset:ls` |
+| mod:dataset:new | Makes a new dataset in .bgwip directory of mod folder. You can edit it manually | `node bg3 mod:dataset:new Boots Data/Armor.txt boots` |
+| mod:dataset:mutate | But manual is not  our thing, is it?  | `node bg3 mod:dataset:mutate Boots setProp:Weight:0:1 toCampClothes` |
+| mod:dataset:from | Combines new and mutate | `node bg3 mod:dataset:from Hats Data/Armor.txt hat setProp:Weight:0:1 toCampClothes`|
 
 ## How to use
 

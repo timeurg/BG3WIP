@@ -4,18 +4,22 @@ const path = require('node:path');
 const fs = require('node:fs');
 const { dirList } = require('../lib/file');
 const sax = require("../lib/sax");
-const newMod = require('./new')
 const { spawn } = require('node:child_process');
 const workplace = path.normalize(settings.locations.workDir + '/' + '.worksettings.js');
 const defaultWorkSettings = obj();
 const workSettings = cache(workplace, defaultWorkSettings);
 const _ = require('lodash')
 
-module.exports = (db) => ({
+
+const newMod = require('./new')
+const dataset = require('./dataset')
+
+module.exports = (db, runtime) => ({
     lsx_locate: logged(timed(lsx_locate)),
     // unmerge: logged(timed(unmerge)),
     new: logged(timed(newMod(workSettings))),
-    ls: () => {
+    ls: function ls() {
+        runtime.showAll = true;
         return fs.readdirSync(settings.locations.workDir)
             .filter(dir => fs.existsSync(`${settings.locations.workDir}/${dir}/Mods/`))
             .map(dir => fs.readdirSync(`${settings.locations.workDir}/${dir}/Mods/`).map(mod => [mod, dir])).flat()
@@ -26,6 +30,7 @@ module.exports = (db) => ({
                 modhandle,
                 name: mod,
                 meta,
+                path: path.normalize(`${settings.locations.workDir}/${dir}`),
             }))
     },
     show: (name) => {
@@ -48,25 +53,32 @@ module.exports = (db) => ({
             });
         child.unref();
     },
+    clear: () => {
+        if (workSettings.active && workSettings.active.name) {
+            print('Stashing', workSettings.active.name)
+            if(fs.existsSync('./!workbench/' + workSettings.active.name)) {
+                fs.rmdirSync('./!workbench/' + workSettings.active.name)
+            }
+        }
+    },
     set_active: (modhandle) => {
-        const mod = module.exports.ls().filter(m => m.modhandle == modhandle)
+        module.exports(db, runtime).clear();
+        const mod = module.exports(db, runtime).ls().filter(m => m.modhandle == modhandle)[0];
+        mod.symlink = path.normalize('./!workbench/' + mod.name);
+        fs.symlinkSync(mod.path, mod.symlink, 'junction');
+        mod.project = mod.symlink + '/.bgwip';
+        // fs.mkdirSync(mod.project)
+        print(`Mod linked to '${mod.symlink}' directory for your convinience`);
         workSettings.active = mod;
         return mod;
     },
-    dataset: (...mutations) => {
-        const res = db.find('last');
-        return res.map(i => {
-            mutations.map(m => {
-                try {
-                    let mutation = require('./mutations/' + m)
-                    i = mutation(i)
-                } catch (e) {
-                    print(`Mutation ${m} not found`)
-                }                
-            })
-            return i;
-        })
+    get_active: () => {
+        if (workSettings.active && workSettings.active.name) {
+            return workSettings.active
+        }
+        throw new Error('No mod in production. Use mod:new or mod:ls -> mod:set_active first')
     },
+    dataset: dataset(workSettings, db, runtime),
     dedupe(donor, ...files) {
         let res = db.find(donor);
         debug(res.length, 'items in original')

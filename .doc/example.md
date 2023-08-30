@@ -13,19 +13,23 @@ cp 'E:\SteamLibrary\steamapps\common\Baldurs Gate 3\Data\Public\BasketEquipmentN
 
 node bg3 db:find:test/Armor.txt using:_foot 
 
-node bg3 mod:dataset toUnderwear --dump test/Boots.txt
+node bg3 mod:dataset:new Boots
+
+node bg3 mod:dataset:Boots mutate toCampClothes --dump test/Boots.txt
 
 node bg3 db:find:test/Armor.txt using:_hand
 
-node bg3 mod:dataset toUnderwear --dump test/Gloves.txt
+node bg3 mod:dataset:new Boots
+
+node bg3 mod:dataset toCampClothes --dump test/Gloves.txt
 
 node bg3 db:find:test/Armor.txt using:_Head
 
-node bg3 mod:dataset toUnderwear --dump test/Head.txt
+node bg3 mod:dataset toCampClothes --dump test/Head.txt
 
 node bg3 db:find:test/Armor.txt using:'_Back|ARM_Cloak'
 
-node bg3 mod:dataset toUnderwear --dump test/Back.txt
+node bg3 mod:dataset toCampClothes --dump test/Back.txt
 
 node bg3 mod:dedupe test/Armor.txt test/Boots.txt test/Gloves.txt test/Head.txt test/Back.txt --dump test/Armor.txt
 

@@ -1,4 +1,4 @@
-module.exports = function toUnderwear(armor) {
+module.exports = function toCampClothes(armor) {
     if (armor.using == '_Foot') {
         armor.Slot = 'VanityBoots'
         armor.using = "ARM_Camp_Shoes"
