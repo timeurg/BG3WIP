@@ -4,7 +4,7 @@
   "description": "BG3 Modding Tool",
   "main": "bg3.js",
   "scripts": {
-    "test": "node bg3"
+    "test": "node sequence.js ./e2e"
   },
   "repository": {
     "type": "git",
