@@ -1,12 +1,12 @@
 const {Base} = require('../models/Base')
 const Data = require('../models/Data')
-const { log, print, debug, logged, timed, unlogged, untimed, usage, error, printOnce } = require('../../lib/common');
+const { log, print, debug, lcdebug, logged, timed, unlogged, untimed, usage, error, printOnce } = require('../../lib/common');
 const fs = require('node:fs');
 const __tests = []
 fs.readdirSync(__dirname)
     .filter(t => t !== 'index.js')
     .map(t => require(__dirname + '/' + t))
-    .filter(T => T.__quack).map(p => debug(p) || p)
+    .filter(T => T.__quack)//.map(p => lcdebug(p) || p)
     .map(T => __tests.push(T.__quack) + (module.exports[T.name] = T))
 
 

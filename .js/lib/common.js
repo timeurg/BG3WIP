@@ -1,11 +1,25 @@
 const fs = require('node:fs');
-const { settings } = require('../../.globals');
+const stack = require('callsite');
+const red   = '\x1B[31m',
+	blue  = '\x1B[34m',
+	reset = '\x1B[0m';
+const settings = require('../../.globals');
 function logwrap(f, LVL = 1) {
+  // const s = stack()[0].getFileName()
+  const s = '-->'
   return function(...args) {
-    if (settings.LOG_LEVEL > LVL) return f.apply(f, args);
+    if (+settings.LOG_LEVEL > LVL) return f.apply(f, [s, ...args]);
   }
 }
-const log = logwrap(console.log.bind(console));
+
+
+const log = logwrap(function(...args){
+  console.log(...args);
+  // console.log(stack()[0].getFunctionName() || 'anonymous'
+  // , stack()[0].getFileName()
+  // , stack()[0].getLineNumber())
+});
+// const log = logwrap(console.debug.bind(console, stack().map(s => s.getFileName()) + ':' + stack()[1].getLineNumber()));
 const debug = logwrap(console.debug.bind(console), 2);
 const lcdebug = logwrap(console.debug.bind(console), 3);
 const count = logwrap(console.count.bind(console));
@@ -48,6 +62,50 @@ function lc(f, y, after = true) {
   return f;
 }
 
+function lc2(f, y, after = true) {
+  if (!f || !f.call)
+    return;
+  if (!f.prototype || !f.prototype.lc) {
+    f.prototype = new Function();
+    f.prototype.lc = {
+      b: [],
+      a: [],
+    }
+  }
+  if (!f.name) {
+    lcdebug('LC_ADD', 'UNKNOWN', ('' + f).substring(0,20))
+  } else {
+    lcdebug('LC_ADD', f.name + (after ? '_AFTER' : '_BEFORE'), (y.name ?? ('' + y).substring(0,20)).replace(/^bound /, '*'))
+  }
+  
+  if (y instanceof Function) {
+    after ? f.prototype.lc.a.push(y) : f.prototype.lc.b.push(y)
+  }
+  function _wrap(thisArg, ...args) {
+    lcdebug('LC_CALL_ARGS', args, f.call)
+    f.prototype.lc.b.map(y => y.apply(y, args));
+    lcdebug('LC_FIRE', 'BEFORE_' + f.name, f.prototype.lc.b.map(f => f.name))
+    let res = f.apply(thisArg, args);
+    f.prototype.lc.a.map(y => y.apply(y, [res, ...args]));
+    lcdebug('LC_FIRE', 'AFTER_' + f.name, f.prototype.lc.a.map(f => f.name))
+    return res;
+  }
+  f.call = _wrap;
+  return f;
+}
+
+const log2 = (function(...args){
+  // console.log(arguments);
+  const place = args[0][1].getFileName() + ':' + args[0][1].getLineNumber()
+  args = args.splice(1)
+  console.log(place, ...args);
+  // console.log(stack()[0].getFunctionName() || 'anonymous'
+  // , stack()[0].getFileName()
+  // , stack()[0].getLineNumber())
+});
+const line = lc2(stack, log2.bind(log2)).call.bind(stack)
+
+
 function logged (f) {
   return lc(lc(f, console.groupCollapsed.bind(console, f.name), false), console.groupEnd.bind(console, f.name));  
 }
@@ -55,25 +113,8 @@ const unlogged = (f) => f
 
 function timed (f) {
   return lc(lc(f, console.time.bind(console, f.name), false), console.timeEnd.bind(console, f.name));  
-  function _wrap(thisArg, args) {
-    console.time(this.name);
-    let res = f.call(thisArg, args);
-    console.timeEnd(this.name);
-    return res;
-  }
-  f.apply = _wrap;
-  return f;
 }
 const untimed = (f) => f
-
-function dumpable (f) {
-  function _wrap(thisArg, args) {
-    let res = f.call(thisArg, args);
-    return res;
-  }
-  f.apply = _wrap;
-  return f;
-}
 
 const obj = () =>
  new Proxy({},
@@ -135,4 +176,5 @@ module.exports = {
   cache,
   printOnce,
   errorOnce,
+  line,
 }
