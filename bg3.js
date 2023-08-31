@@ -2,7 +2,9 @@ const fs = require('node:fs');
 const readline = require('readline-sync');
 const path = require('node:path');
 const { line, log, debug, print, usage, obj, error, timed, logged, cache } = require('./.js/lib/common');
-
+if(!fs.existsSync('./.globals.js')) {
+    fs.writeFileSync('./.globals.js', 'module.exports = {}')
+}
 
 const globals = require('./.globals.js');
 log(globals);
