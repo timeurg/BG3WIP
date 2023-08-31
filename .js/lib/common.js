@@ -110,16 +110,13 @@ function saveCache(cache, filename) {
   fs.writeFileSync(filename, 'module.exports = ' + JSON.stringify(cache))
 }
 const cache = (filename, def) => {
-  log(arguments)
   if(!fs.existsSync(filename)){
     saveCache(def, filename)
-  }
-  log(filename)
+  }  
   let o = require(filename)
   log(`cache-${filename}`, o)
 
   function set (target, key, value, receiver) {
-    log(value, value === Object(value))
     log(`cache-set-${filename}`, key, value)
     Reflect.set(target, key, typeof value !== 'object' ? value : new Proxy(value,
       {
