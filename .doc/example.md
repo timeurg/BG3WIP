@@ -11,31 +11,32 @@ So I just do:
 ```
 cp 'E:\SteamLibrary\steamapps\common\Baldurs Gate 3\Data\Public\BasketEquipmentNSFW\Stats\Generated\Data\Armor.txt' test/Armor.txt
 
-node bg3 db:find:test/Armor.txt using:_foot 
+node bg3 db:find test/Armor.txt using:_foot 
 
 node bg3 mod:dataset:new Boots
 
 node bg3 mod:dataset:Boots mutate toCampClothes --dump test/Boots.txt
 
-node bg3 db:find:test/Armor.txt using:_hand
+```
 
-node bg3 mod:dataset:new Boots
+or shorter:
 
-node bg3 mod:dataset toCampClothes --dump test/Gloves.txt
+```
+node bg3 mod:dataset:from Gloves Data/Armor.txt using:_hand toCampClothes --dump test/Gloves.txt
 
-node bg3 db:find:test/Armor.txt using:_Head
+node bg3 mod:dataset:from Head Data/Armor.txt using:_Head toCampClothes --dump test/Head.txt
 
-node bg3 mod:dataset toCampClothes --dump test/Head.txt
+node bg3 mod:dataset:from Back Data/Armor.txt using:'_Back|ARM_Cloak' toCampClothes setProp:Rarity:Legendary:0 --dump test/Back.txt
 
-node bg3 db:find:test/Armor.txt using:'_Back|ARM_Cloak'
+```
+You can remove entries present in other files from Armor.txt:
 
-node bg3 mod:dataset toCampClothes --dump test/Back.txt
-
+```
 node bg3 mod:dedupe test/Armor.txt test/Boots.txt test/Gloves.txt test/Head.txt test/Back.txt --dump test/Armor.txt
 
 ```
 
-Well actually I don't, I just hit 
+I myself just hit 
 
 ```
 node sequence.js ./private/basket.js
@@ -43,4 +44,4 @@ node sequence.js ./private/basket.js
 node bg3 mod:test
 ```
 
-And enjoy loking fabulous ingame.
+And enjoy looking fabulous ingame.
