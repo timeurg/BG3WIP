@@ -1,11 +1,11 @@
-const { settings } = require('../../.globals');
-const { cache, log, print, count, error, logged, timed, unlogged, untimed, usage, obj, debug } = require('../lib/common');
+const { line, cache, log, print, count, error, logged, timed, unlogged, untimed, usage, obj, debug } = require('../lib/common');
+const settings = cache('../../.globals');
 const path = require('node:path');
 const fs = require('node:fs');
 const { dirList } = require('../lib/file');
 const sax = require("../lib/sax");
 const { spawn } = require('node:child_process');
-const workplace = path.normalize(settings.locations.workDir + '/' + '.worksettings.js');
+const workplace = path.normalize(settings.workDir + '/' + '.worksettings.js');
 const defaultWorkSettings = obj();
 const workSettings = cache(workplace, defaultWorkSettings);
 const _ = require('lodash')
@@ -14,40 +14,40 @@ const _ = require('lodash')
 const newMod = require('./new')
 const dataset = require('./dataset')
 
-module.exports = (db, runtime) => ({
+module.exports = (db, runtime, config) => ({
     lsx_locate: logged(timed(lsx_locate)),
     // unmerge: logged(timed(unmerge)),
     new: logged(timed(newMod(workSettings))),
     ls: function ls() {
         runtime.showAll = true;
-        return fs.readdirSync(settings.locations.workDir)
-            .filter(dir => fs.existsSync(`${settings.locations.workDir}/${dir}/Mods/`))
-            .map(dir => fs.readdirSync(`${settings.locations.workDir}/${dir}/Mods/`).map(mod => [mod, dir])).flat()
+        return fs.readdirSync(settings.workDir)
+            .filter(dir => fs.existsSync(`${settings.workDir}/${dir}/Mods/`))
+            .map(dir => fs.readdirSync(`${settings.workDir}/${dir}/Mods/`).map(mod => [mod, dir])).flat()
             .map(([mod, dir]) => mod == dir ? [mod, mod, dir] : [`${mod}[${dir}]`, mod, dir])
-            .map(([modhandle, mod, dir]) => [modhandle, mod, dir, path.normalize(`${settings.locations.workDir}/${dir}/Mods/${mod}/meta.lsx`)])
+            .map(([modhandle, mod, dir]) => [modhandle, mod, dir, path.normalize(`${settings.workDir}/${dir}/Mods/${mod}/meta.lsx`)])
             .filter(([modhandle, mod, dir, meta]) => fs.existsSync(meta))
             .map(([modhandle, mod, dir, meta]) => ({ 
                 modhandle,
                 name: mod,
                 meta,
-                path: path.normalize(`${settings.locations.workDir}/${dir}`),
+                path: path.normalize(`${settings.workDir}/${dir}`),
             }))
     },
     show: (name) => {
         name = name || workSettings.active.name;
-        spawn('explorer.exe', [path.normalize(settings.locations.workDir + '/' + name)]);
+        spawn('explorer.exe', [path.normalize(settings.workDir + '/' + name)]);
     },
     test: () => {
-        //@TODO build a minimal pak and enable, copy all able-to load unpacked files to settings.locations.gameDir /Data
+        //@TODO build a minimal pak and enable, copy all able-to load unpacked files to settings.gameDir /Data
         // option to disable other mods
         // vulkan option
         const out = fs.openSync('./logs/out.log', 'a');
         const err = fs.openSync('./logs/err.log', 'a');
         const child = spawn(
-            path.normalize(settings.locations.gameDir + '/bin/bg3_dx11.exe'), 
+            path.normalize(config.gameDir + '/bin/bg3_dx11.exe'), 
             ['--skip-launcher'], 
             {
-                cwd: path.normalize(settings.locations.gameDir + '/bin'),
+                cwd: path.normalize(config.gameDir + '/bin'),
                 detached: true, 
                 stdio: [ 'ignore', out, err ]
             });
@@ -55,13 +55,22 @@ module.exports = (db, runtime) => ({
     },
     clear: () => {
         if (workSettings.active && workSettings.active.name) {
-            print('Stashing', workSettings.active.name)
+            line('Stashing', workSettings.active.name)
             if(fs.existsSync('./!workbench/' + workSettings.active.name)) {
-                fs.rmdirSync('./!workbench/' + workSettings.active.name)
+                fs.rmSync('./!workbench/' + workSettings.active.name, {recursive: true})
             }
         }
     },
+    rm: (modhandle) => {
+        line('Removing ' + modhandle, runtime);
+        const mod = module.exports(db, runtime).ls().filter(m => m.modhandle == modhandle)[0];
+        const readline = require('readline-sync');
+        if (runtime.yes || readline.keyInYN(`You sure you want to delete ${mod.path}?`)){
+            fs.rmSync(mod.path, {recursive: true})
+        }
+    },
     set_active: (modhandle) => {
+        line('Setting active mod: ' + modhandle);
         module.exports(db, runtime).clear();
         const mod = module.exports(db, runtime).ls().filter(m => m.modhandle == modhandle)[0];
         mod.symlink = path.normalize('./!workbench/' + mod.name);

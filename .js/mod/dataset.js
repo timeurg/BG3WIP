@@ -1,4 +1,3 @@
-const { settings } = require('../../.globals');
 const { log, print, count, error, logged, timed, unlogged, untimed, usage, debug, errorOnce } = require('../lib/common');
 const path = require('node:path');
 const fs = require('node:fs');
@@ -9,33 +8,41 @@ const { randomUUID } = require('node:crypto');
 const readline = require('readline-sync')
 
 module.exports = (config, db, runtime) => {
-    const mod = config.active
-    debug('Active mod', mod)
-    const datasetPath = mod.project + '/datasets';
+    function getDatasetDir() {
+        const mod = config.active
+        debug('Active mod', mod)
+        if (! mod) {
+            throw new Error('Use mod:set_active first');            
+        }
+        return path.normalize(mod.project + '/datasets');
+    }
     return {
         ls: () => {
+            if (!fs.existsSync(getDatasetDir())) {
+                return []
+            }
             runtime.showAll = true;
-            return fs.readdirSync(datasetPath + '/')
+            return fs.readdirSync(getDatasetDir() + '/')
                         .filter(f => path.extname(f) !== '.meta')
                         .map(f => f.replace('.json', ''))
         },
         new: (name, source, query) => {
             const res = db.find(source, query);
-            if (!fs.existsSync(datasetPath)) {
-                fs.mkdirSync(datasetPath)
+            if (!fs.existsSync(getDatasetDir())) {
+                fs.mkdirSync(getDatasetDir(), {recursive: true})
             }
-            fs.writeFileSync(datasetPath + '/' + name + '.json', JSON.stringify(res, undefined, 2));
+            fs.writeFileSync(getDatasetDir() + '/' + name + '.json', JSON.stringify(res, undefined, 2));
             const meta = {
                 type: res[0].constructor.name,
                 command: [name, source, query]
             };
-            fs.writeFileSync(datasetPath + '/' + name + '.meta', JSON.stringify(meta));
-            print('Saved to', path.normalize(datasetPath + '/' + name + '.json'))
+            fs.writeFileSync(getDatasetDir() + '/' + name + '.meta', JSON.stringify(meta));
+            print('Saved to', path.normalize(getDatasetDir() + '/' + name + '.json'))
             return res
         },
         get: (name) => {
-            const res = JSON.parse(fs.readFileSync(datasetPath + '/' + name + '.json', 'utf-8'));
-            const meta = JSON.parse(fs.readFileSync(datasetPath + '/' + name + '.meta', 'utf-8'));
+            const res = JSON.parse(fs.readFileSync(getDatasetDir() + '/' + name + '.json', 'utf-8'));
+            const meta = JSON.parse(fs.readFileSync(getDatasetDir() + '/' + name + '.meta', 'utf-8'));
             const models = require('./../db/models');
             if (models[meta.type]) {
                 return res.map(i => new models[meta.type](i))

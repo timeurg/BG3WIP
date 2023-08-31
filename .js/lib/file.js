@@ -1,16 +1,17 @@
-const { settings } = require('../../.globals');
-const { log, print, logged, timed, unlogged, untimed, debug } = require('./common');
+const { log, print, logged, timed, unlogged, untimed, debug, cache } = require('./common');
+const settings = cache('../../.globals');
+const config = require(settings.workDir + '/.config.js')
 const path = require('node:path');
 const fs = require('node:fs');
 const csv = require('./csv')
 
 function dirList () {
     let filenames = [
-        // settings.locations.workDir + '/' + modProps.name + '/Public/' + modProps.name,
-        ...Object.keys(settings.locations.unpackedGameAssets).map(gameMod => 
+        // settings.workDir + '/' + modProps.name + '/Public/' + modProps.name,
+        ...Object.keys(config.unpackedGameAssets).map(gameMod => 
             ['','Dev'].map(type => gameMod + type)
             .map((dirName) => 
-                (settings.locations.unpackedGameAssets[gameMod] + '/Public/' + dirName)
+                (config.unpackedGameAssets[gameMod] + '/Public/' + dirName)
             )
         ),
     ].flat().map(f => path.normalize(f));

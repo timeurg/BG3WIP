@@ -1,5 +1,5 @@
-const { settings } = require('../../.globals');
-const { log, print, count, error, logged, timed, unlogged, untimed, usage, debug } = require('../lib/common');
+const { log, print, count, error, logged, timed, unlogged, untimed, usage, debug, cache } = require('../lib/common');
+const settings = cache('../../.globals');
 const path = require('node:path');
 const fs = require('node:fs');
 const { dirList } = require('../lib/file');
@@ -46,7 +46,7 @@ module.exports = (config) => function newMod(name) {
                 const filename = path.normalize(
                     f.path
                         .replaceAll('BG3WIP', name)
-                        .replace('.mod_bp', settings.locations.workDir ) + '/' + f.name
+                        .replace('.mod_bp', settings.workDir ) + '/' + f.name
                 );
                 if (fs.existsSync(filename) && !warned) {
                     fresh = false

@@ -1,52 +1,44 @@
 const fs = require('node:fs');
 const readline = require('readline-sync');
 const path = require('node:path');
-let globals;
-try {
-    globals = require('./.globals.js');
-} catch (e) {
-    fs.writeFileSync('./.globals.js', 'module.exports = {"LOG_LEVEL": 0}');
-    globals = require('./.globals.js');
-}
-globals.LOG_LEVEL = process.env.LOG_LEVEL || process.env.LOG_LVL || 0;
+const { line, log, debug, print, usage, obj, error, timed, logged, cache } = require('./.js/lib/common');
+
+
+const globals = require('./.globals.js');
+log(globals);
 if (!globals.workDir) {
-    globals.workDir = readline.prompt({prompt: 'Where will you store your mods? '});
+    globals.workDir = readline.prompt({prompt: 'Where will you store your mods? > '});
+    fs.writeFileSync('./.globals.js', 'module.exports = ' + JSON.stringify(globals));
 }
-fs.writeFileSync('./.globals.js', 'module.exports = ' + JSON.stringify(globals));
-const { line, log, debug, print, usage, obj, lcdebug, error, timed, logged, cache } = require('./.js/lib/common');
-line(globals)
+
 debug(globals)
 const workplace = path.normalize(globals.workDir + '/' + '.config.js');
 
 const defaultConfig = obj();
 defaultConfig.show = 5;
 const config = cache(workplace, defaultConfig);
-print(config)
+
+
 const mod = require('./.js/mod');
 const db = require('./.js/db');
 
-
-
-const csv = require('./.js/lib/csv');
 const { dumpToFile } = require('./.js/lib/file');
-if (!config.settings) {
-    config.settings = {};
-}
-if (!config.settings.locations) {
-    // config.settings.locations = {};
-    // config.settings.locations.gameDir = readline.prompt({prompt: 'Where is BG3 installed? '})
-    // const unpackedGameAssets = readline.prompt({prompt: `You should've already unpacked Patch1, Gustav and Shared mods somewhere, where exactly may I ask? If they're not there yet I can wait while you do it.`});
-    // config.settings.locations.unpackedGameAssets = {
-    //     'Patch1': unpackedGameAssets + '/Patch1',
-    //     'Gustav': unpackedGameAssets + '/Gustav',
-    //     'Shared': unpackedGameAssets + '/Shared',
-    // }
+
+if (!config.gameDir) {
+    config.gameDir = readline.prompt({prompt: 'Where is BG3 installed? > '})
+    const unpackedGameAssets = readline.prompt({prompt: `You should've already unpacked Patch1, Gustav and Shared mods somewhere, where exactly may I ask? If they're not there yet I can wait while you do it. > `});
+    config.unpackedGameAssets = {
+        'Patch1': unpackedGameAssets + '/Patch1',
+        'Gustav': unpackedGameAssets + '/Gustav',
+        'Shared': unpackedGameAssets + '/Shared',
+    }
 }
 
-lcdebug(process.argv)
+debug(process.argv)
 
 const runtime = {
     showAll: false,
+    yes: false,
 }
 
 const modules = {
@@ -56,7 +48,7 @@ const modules = {
         path.map((p,i) => i === path.length - 1 ? c[p] = value : c = c[p])
     },
     db,
-    mod: mod(db, runtime),
+    mod: mod(db, runtime, config),
     c: 'config',
 }
 
@@ -76,6 +68,10 @@ node bg3 db:values:Data/Armor.txt Boosts --dump test/Boosts.csv
         callback: () => runtime.showAll = true,
         help: `Show all entries of result regardless of "show" param`
     },
+    '--yes' : {
+        callback: () => runtime.yes = true,
+        help: `Autoanswers yes to prompts.`
+    },
 }
 
 function help () {
@@ -85,7 +81,7 @@ function help () {
     Object.keys(params).map(k => params[k].help ? print (k, params[k].help) : print(k))
     print('### CONTENTS ###')
     console.dir(modules)
-    process.exit(1);
+    process.exit(0);
 }
 
 
@@ -118,12 +114,12 @@ debug(call, args)
 if (call && call.apply) {
     const runParams = obj();
     args.map((arg, pos) => arg.indexOf('--')  === 0 && (runParams.params[pos] = arg)).filter(i => i)
-    lcdebug(runParams)
+    debug(runParams)
     const LC_BEFORE = [], LC_AFTER = [];
     runParams.pos = Object.keys(runParams.params).map(k=>+k).sort((a,b) => a >b );
     if (runParams.pos[0] !== undefined) {
         runParams.args = args.splice(runParams.pos[0])
-        lcdebug(runParams,args)
+        debug(runParams,args)
         runParams.parsed = runParams.pos.map((k, i) => ({
                 command: runParams.params[k],
                 args: runParams.args.splice(1, runParams.pos[i + 1] ? runParams.pos[i + 1] - runParams.pos[i] : runParams.args.length) 
@@ -135,9 +131,9 @@ if (call && call.apply) {
                 LC_BEFORE.push(params[p.command].callback.bind(params[p.command].callback, ...p.args))
             ) 
             : log(p.command, 'not recognized'))
-        lcdebug('options', runParams)
+        debug('options', runParams)
         // args = args.splice(runParams.pos[0])
-        lcdebug('args', args)
+        debug('args', args)
     }
     // return;
     debug('Executing', call.name, args)

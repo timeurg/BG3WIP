@@ -1,6 +1,5 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { settings } = require('../../../.globals');
 const { dirList } = require('../../lib/file');
 const { log, print, debug, logged, timed, unlogged, untimed, usage } = require('../../lib/common');
 

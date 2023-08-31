@@ -1,10 +1,11 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { settings } = require('../../.globals');
+
 const { dirList } = require('../lib/file');
 const { log, print, debug, logged, timed, unlogged, untimed, usage, obj, cache } = require('../lib/common');
+const settings = cache('../../.globals');
 const {xmlResources, txtResources} = require('./resources')
-const workplace = path.normalize(settings.locations.workDir + '/' + '.dbcache.js');
+const workplace = path.normalize(settings.workDir + '/' + '.dbcache.js');
 const dbCache = cache(workplace, obj());
 const find = require('./find')
 

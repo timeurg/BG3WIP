@@ -23,7 +23,7 @@ You can configure how much entries are shown in console (doesn't affect commands
 
 `node bg3 config show 10`
 
-You can dump any output (the real result of a function, not what is shown due to `config show` param:
+You can dump any output (the real result of a function, not what is shown due to `config show` param):
 
 `node bg3 db:find Data/Armor.txt --dump test/Armor.csv`
 
@@ -40,8 +40,8 @@ Provides mod building, testing and publishing commands
 | mod:new | Creates a new mod in the working directory using template from ./.mod_bp/ | `node bg3 mod:new AwesomeMod` |
 | mod:ls | Lists mods found in the working directory | `node bg3 mod:ls` |
 | mod:set_active | Start or resume working on a mod in your working directory | Can look like `node bg3 mod:set_active AwesomeMod<v5>` if you have multiple versions of same mod in working directory |
-| mod:lsx_locate | Finds lsx file by uuid. Uses active mod and pathes from .globals.js | `node bg3 mod:lsx_locate 0c0c1031-4a04-4e8f-ba8a-8aafa2a396e8` |
-| mod:test | Launches the game with your AwesomeMod enabled, as much files uncompiled and pushed into game Data as we can. Some additional informartion on game session run can be found in ./logs, so analyze that))<br>I highly recommend [Skip Startup Videos](https://www.nexusmods.com/baldursgate3/mods/657) and [No Press Any Key Menu](https://www.nexusmods.com/baldursgate3/mods/745) for this, great mods. I look into []() | `node bg3 mod:test`
+| mod:lsx_locate | Finds lsx file by uuid. Uses active mod and configured pathes | `node bg3 mod:lsx_locate 0c0c1031-4a04-4e8f-ba8a-8aafa2a396e8` |
+| mod:test | Launches the game with your AwesomeMod enabled, as much files uncompiled and pushed into game Data as we can. Some additional informartion on game session run can be found in ./logs, so analyze that))<br>I highly recommend [Skip Startup Videos](https://www.nexusmods.com/baldursgate3/mods/657) and [No Press Any Key Menu](https://www.nexusmods.com/baldursgate3/mods/745) for this, great mods. I plan to study [bg3se](https://github.com/Norbyte/bg3se/) to maybe utilize it as well. | `node bg3 mod:test`
 
 #### Dataset submodule
 
@@ -56,14 +56,13 @@ Make use of your *db:find*s with or without inbuilt and user defined mutations i
 
 ## How to use
 
-1. You have to know how to use https://github.com/Norbyte/lslib at the moment. Unpack and run batch lsf -> lsx  conversion on Patch1.pac, Gustav.pak, Shared.pak and list them dirs in .globals.js at the minimum, add directories as you see fit in .globals.js or commands later.
+1. You have to know how to use https://github.com/Norbyte/lslib at the moment. Unpack and run batch lsf -> lsx  conversion on Patch1.pac, Gustav.pak, Shared.pak at the minimum, add directories as you see fit later.
 2. Install Node.js https://nodejs.org/en/download/current
 3. Download and place this directory somewhere convinient.
-4. Copy/Rename `.example.globals.js` to `.globals.js` and type in your values there
 5. Right-click your windows start icon choose Powershell or whatever looks most like it, a terminal window will open
 6. type `cd /d WHERE_YOU_PLACED_THIS`, hit enter
 5. type `npm i`, hit enter
-7. type `node bg3`, if everything went well a help message with available commands will be shown.
+7. type `node bg3`, if everything went well you will be propted for pathes to neccessary directories, once all is set this command produces a help message with available commands.
 
 ## Credits
 
@@ -76,7 +75,7 @@ Huge thanks to
 ## Plans
 
 ### mod
-* declarative style mod building and publication (already published https://www.nexusmods.com/baldursgate3/mods/1351 using a prototype of this toolset)
+* declarative style mod building and publication (already published [BG3 Transmog Camp Clothes](https://www.nexusmods.com/baldursgate3/mods/1351) using a prototype of this toolset)
 * publish
 * merge-unmerge-humanize lsx
 * container, treasuretable generation 
