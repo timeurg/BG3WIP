@@ -37,12 +37,14 @@ module.exports = (db, runtime, config) => ({
         name = name || workSettings.active.name;
         spawn('explorer.exe', [path.normalize(settings.workDir + '/' + name)]);
     },
-    test: () => {
-        //@TODO build a minimal pak and enable, copy all able-to load unpacked files to settings.gameDir /Data
-        // option to disable other mods
-        // vulkan option
+    game: () => {
+        //@TODO vulkan option
+        if (!fs.existsSync('./logs')) {
+            fs.mkdirSync('./logs')
+        }
         const out = fs.openSync('./logs/out.log', 'a');
         const err = fs.openSync('./logs/err.log', 'a');
+        log(path.normalize(config.gameDir + '/bin/bg3_dx11.exe'))
         const child = spawn(
             path.normalize(config.gameDir + '/bin/bg3_dx11.exe'), 
             ['--skip-launcher'], 
@@ -52,6 +54,11 @@ module.exports = (db, runtime, config) => ({
                 stdio: [ 'ignore', out, err ]
             });
         child.unref();
+    },
+    test: () => {
+        // @TODO build a minimal pak and enable, copy all able-to load unpacked files to settings.gameDir /Data
+        // option to disable other mods
+        module.exports(db, runtime, config).game()
     },
     clear: () => {
         if (workSettings.active && workSettings.active.name) {
@@ -63,7 +70,7 @@ module.exports = (db, runtime, config) => ({
     },
     rm: (modhandle) => {
         line('Removing ' + modhandle, runtime);
-        const mod = module.exports(db, runtime).ls().filter(m => m.modhandle == modhandle)[0];
+        const mod = module.exports(db, runtime, config).ls().filter(m => m.modhandle == modhandle)[0];
         const readline = require('readline-sync');
         if (runtime.yes || readline.keyInYN(`You sure you want to delete ${mod.path}?`)){
             fs.rmSync(mod.path, {recursive: true})
@@ -71,8 +78,8 @@ module.exports = (db, runtime, config) => ({
     },
     set_active: (modhandle) => {
         line('Setting active mod: ' + modhandle);
-        module.exports(db, runtime).clear();
-        const mod = module.exports(db, runtime).ls().filter(m => m.modhandle == modhandle)[0];
+        module.exports(db, runtime, config).clear();
+        const mod = module.exports(db, runtime, config).ls().filter(m => m.modhandle == modhandle)[0];
         mod.symlink = path.normalize('./!workbench/' + mod.name);
         fs.symlinkSync(mod.path, mod.symlink, 'junction');
         mod.project = mod.symlink + '/.bgwip';
