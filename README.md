@@ -54,12 +54,19 @@ Make use of your *db:find*s with or without inbuilt and user defined mutations i
 | mod:dataset:mutate | But manual is not  our thing, is it?  | `node bg3 mod:dataset:mutate Boots setProp:Weight:0:1 toCampClothes` |
 | mod:dataset:from | Combines new and mutate | `node bg3 mod:dataset:from Hats Data/Armor.txt hat setProp:Weight:0:1 toCampClothes`|
 
+### Sequences
+
+This comes with a basic sequence runner that can run CLI and node,js commands from a list one-by-one. 
+
+See [example](.doc/sequence-example.js), try it out: `node sequence.js ./.doc/sequence-example.js`, write your own
+
 ## How to use
 
 1. You have to know how to use https://github.com/Norbyte/lslib at the moment. Unpack and run batch lsf -> lsx  conversion on Patch1.pac, Gustav.pak, Shared.pak at the minimum, add directories as you see fit later.
 2. Install Node.js https://nodejs.org/en/download/current
 3. Download and place this directory somewhere convinient.
 5. Press `Win + R`, type `cmd`, a terminal will open
+6. type `chcp 65001`, hit enter
 6. type `cd /d WHERE_YOU_PLACED_THIS`, hit enter
 5. type `npm i`, hit enter
 7. type `node bg3`, if everything went well you will be propted for pathes to neccessary directories, once all is set this command produces a help message with available commands.
