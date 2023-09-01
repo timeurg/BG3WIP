@@ -14,6 +14,7 @@ commands.map(c => {
         let res, runtime = {show: 5};
         if (c instanceof Function) {
             res = c();
+            runtime = Object.assign(runtime, res);
             if (res && res.run) {
                 c = res.command;
             } else {

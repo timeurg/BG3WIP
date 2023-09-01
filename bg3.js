@@ -10,7 +10,7 @@ const globals = require('./.globals.js');
 log(globals);
 if (!globals.workDir) {
     globals.workDir = readline.prompt({prompt: 'Where will you store your mods? > '});
-    fs.writeFileSync('./.globals.js', 'module.exports = ' + JSON.stringify(globals));
+    fs.writeFileSync('./.globals.js', 'module.exports = ' + JSON.stringify(globals, undefined, 2));
 }
 
 debug(globals)

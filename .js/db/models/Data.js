@@ -24,6 +24,12 @@ module.exports = class Data extends Base {
         return (Object.keys(this).map(k => `${rPropMap[k] || `data ${k}`} "${Array.isArray(this[k]) ? this[k].join('"') : this[k]}"`).join("\r\n") + "\r\n")
     }
 
+    getStorageByType(name) {
+        return {
+            Armor: `\\Public\\${name}\\Stats\\Generated\\Data`
+        }[this.type]
+    }
+
     static getByText(txt) {
         if (!txt) {
             error("Empty text")

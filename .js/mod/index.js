@@ -13,6 +13,7 @@ const _ = require('lodash')
 
 const newMod = require('./new')
 const dataset = require('./dataset')
+const addObject = require('./add')
 
 module.exports = (db, runtime, config) => ({
     lsx_locate: logged(timed(lsx_locate)),
@@ -95,6 +96,7 @@ module.exports = (db, runtime, config) => ({
         throw new Error('No mod in production. Use mod:new or mod:ls -> mod:set_active first')
     },
     dataset: dataset(workSettings, db, runtime),
+    add: addObject(workSettings, db, runtime, dataset(workSettings, db, runtime)),
     dedupe(donor, ...files) {
         let res = db.find(donor);
         debug(res.length, 'items in original')

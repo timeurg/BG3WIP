@@ -1,5 +1,5 @@
 module.exports = function toCampClothes(armor) {
-    armor.Slot = 'VanityBody'
-    armor.using = "ARM_Camp_Body"
+    armor.Slot = 'Underwear'
+    armor.using = "ARM_Underwear"
     return armor
 }

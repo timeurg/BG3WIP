@@ -2,10 +2,10 @@ const fs = require('node:fs');
 const callsite = require('callsite');
 const { isArguments } = require('lodash');
 const color = require('./color');
-function logwrap(f, LVL = 1) {
+function logwrap(f, LVL = 1, c = s =>s) {
   const LOG_LEVEL = process.env.LOG_LEVEL || process.env.LOG_LVL || 0;
   return function(...args) {
-    if (+LOG_LEVEL > LVL) return f.apply(f, [...args]);
+    if (+LOG_LEVEL > LVL) return f.apply(f, [...args.map(c)]);
   }
 }
 
@@ -29,7 +29,7 @@ const log = logwrap(line);
 const debug = logwrap(line, 2);
 
 const count = logwrap(console.count.bind(console));
-const error = (console.error.bind(console));
+const error = logwrap(line, -1, color.red);
 const print = console.log.bind(console);
 const printed = []
 const printOnce = (...arg) => printed.includes(JSON.stringify(arg)) || printed.push(JSON.stringify(arg)) + print(...arg)
@@ -105,7 +105,7 @@ const obj = () =>
 
 function saveCache(cache, filename) {
   log(`cache-save-${filename}`, cache)
-  fs.writeFileSync(filename, 'module.exports = ' + JSON.stringify(cache))
+  fs.writeFileSync(filename, 'module.exports = ' + JSON.stringify(cache, undefined, 2))
 }
 const cache = (filename, def) => {
   if(!fs.existsSync(filename)){

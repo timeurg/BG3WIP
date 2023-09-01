@@ -17,7 +17,7 @@ module.exports = (config, db, runtime) => {
         return path.normalize(mod.project + '/datasets');
     }
     return {
-        ls: () => {
+        ls: (...args) => {
             if (!fs.existsSync(getDatasetDir())) {
                 return []
             }
@@ -25,6 +25,10 @@ module.exports = (config, db, runtime) => {
             return fs.readdirSync(getDatasetDir() + '/')
                         .filter(f => path.extname(f) !== '.meta')
                         .map(f => f.replace('.json', ''))
+                        .map(f => args.includes('c') ? { 
+                            name: f,
+                            items: module.exports(config, db).get(f).length
+                        } : f)
         },
         new: (name, source, query) => {
             const res = db.find(source, query);
@@ -36,7 +40,7 @@ module.exports = (config, db, runtime) => {
                 type: res[0].constructor.name,
                 command: [name, source, query]
             };
-            fs.writeFileSync(getDatasetDir() + '/' + name + '.meta', JSON.stringify(meta));
+            fs.writeFileSync(getDatasetDir() + '/' + name + '.meta', JSON.stringify(meta, undefined, 2));
             print('Saved to', path.normalize(getDatasetDir() + '/' + name + '.json'))
             return res
         },
@@ -59,7 +63,11 @@ module.exports = (config, db, runtime) => {
                 mutations.map(m => {
                     m = m.split(':');
                     try {
-                        let mutation = require('./mutations/' + m[0])
+                        let mutation
+                        if (fs.existsSync('./mutations/' + m[0]))
+                            mutation = require('./mutations/' + m[0])
+                        else
+                            mutation = require(process.cwd() + '/private/' + m[0])
                         res = mutation(i, ...m.slice(1))
                     } catch (e) {
                         errorOnce(`Mutation ${m[0]}: ${e}`)

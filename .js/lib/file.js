@@ -27,7 +27,7 @@ function dumpToFile(filename, result, arguments, ) {
         debug(arguments)
         return
     }
-    debug(path.normalize(filename))
+    print(path.resolve(filename))
     log('dump', arguments)
     // return
     debug(result.length, arguments)            
@@ -37,7 +37,7 @@ function dumpToFile(filename, result, arguments, ) {
             return timed(logged(csv))(filename, result)
         default:
             // debug(result)
-            const toStr = (o) => '' + o == '[object Object]' ? JSON.stringify(o) : '' + o;
+            const toStr = (o) => '' + o == '[object Object]' ? JSON.stringify(o, undefined, 2) : '' + o;
             if (Array.isArray(result)) {
                 contents = result.map(toStr).join('\r\n')
             } else {
