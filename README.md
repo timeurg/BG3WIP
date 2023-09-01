@@ -45,7 +45,7 @@ Provides mod building, testing and publishing commands
 
 #### Dataset submodule
 
-Make use of your *db:find*s with or without inbuilt and user defined mutations inside your AwesomeMod | <br> See [example](.doc/example.md)
+Make use of your *db:find*s with or without inbuilt and user defined mutations inside your AwesomeMod. <br> See [example](.doc/example.md)
 
 |Command|Description|Examples|
 |---|---|---|
@@ -59,10 +59,11 @@ Make use of your *db:find*s with or without inbuilt and user defined mutations i
 1. You have to know how to use https://github.com/Norbyte/lslib at the moment. Unpack and run batch lsf -> lsx  conversion on Patch1.pac, Gustav.pak, Shared.pak at the minimum, add directories as you see fit later.
 2. Install Node.js https://nodejs.org/en/download/current
 3. Download and place this directory somewhere convinient.
-5. Right-click your windows start icon choose Powershell or whatever looks most like it, a terminal window will open
+5. Press `Win + R`, type `cmd`, a terminal will open
 6. type `cd /d WHERE_YOU_PLACED_THIS`, hit enter
 5. type `npm i`, hit enter
 7. type `node bg3`, if everything went well you will be propted for pathes to neccessary directories, once all is set this command produces a help message with available commands.
+8. run `npm test` to see if all modules work as intended
 
 ## Credits
 

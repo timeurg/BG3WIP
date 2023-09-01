@@ -1,9 +1,7 @@
 const fs = require('node:fs');
 const callsite = require('callsite');
 const { isArguments } = require('lodash');
-const red   = '\x1B[31m',
-	blue  = '\x1B[34m', grey = '\x1B[90m',
-	reset = '\x1B[0m';
+const color = require('./color');
 function logwrap(f, LVL = 1) {
   const LOG_LEVEL = process.env.LOG_LEVEL || process.env.LOG_LVL || 0;
   return function(...args) {
@@ -13,7 +11,7 @@ function logwrap(f, LVL = 1) {
 
 function line (...args){
   const stack = callsite()
-  const place = grey + stack[2].getFileName() + ':' + stack[2].getLineNumber() + reset;
+  const place = color.grey(stack[2].getFileName() + ':' + stack[2].getLineNumber());
   // args = args.splice(1)
   console.log(place, ...args);
 };

@@ -44,6 +44,9 @@ function dumpToFile(filename, result, arguments, ) {
                 contents = toStr(result)
             }
     }
+    if (! fs.existsSync(path.dirname(filename))) {
+        fs.mkdirSync(path.dirname(filename), {recursive: true})
+    }
     return fs.writeFileSync(filename, contents);
 }
 

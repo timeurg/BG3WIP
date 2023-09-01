@@ -1,5 +1,6 @@
-const modname = `TestMod` + (new Date).getTime();
+const {resolve} = require('node:path');
 
+const modname = `TestMod` + (new Date).getTime();
 console.log(modname)
 
 module.exports = [
@@ -21,7 +22,7 @@ module.exports = [
     
     `node bg3 mod:dataset:get Hats --dump test/Hats.txt`,
     
-    `tail -n 10 test/Hats.txt`,
+    process.env.TERM ? `tail -n 10 test/Hats.txt` : resolve('./.misc/tail.cmd') + ' ' + resolve('test/Hats.txt'),
 
     `node bg3 mod:clear`,
 
