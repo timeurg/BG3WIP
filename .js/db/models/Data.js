@@ -21,7 +21,7 @@ module.exports = class Data extends Base {
 
     
     toString() {
-        return (Object.keys(this).map(k => `${rPropMap[k] || `data ${k}`} "${Array.isArray(this[k]) ? this[k].join('"') : this[k]}"`).join("\r\n") + "\r\n")
+        return (Object.keys(this).map(k => `${rPropMap[k] || `data "${k}"`} "${Array.isArray(this[k]) ? this[k].join('"') : this[k]}"`).join("\r\n") + "\r\n")
     }
 
     getStorageByType(name) {
